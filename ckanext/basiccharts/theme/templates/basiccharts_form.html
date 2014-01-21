@@ -1,0 +1,5 @@
+{% import 'macros/form.html' as form %}
+
+{{ form.select('xAxis', label=_('X Axis'), options=fields, selected=xAxis['value']) }}
+{{ form.select('yAxis', label=_('Y Axis'), options=fields, selected=yAxis['value']) }}
+

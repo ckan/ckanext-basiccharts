@@ -1,0 +1,17 @@
+{% resource 'basiccharts/main' %}
+
+<script>
+  window.onload = function() {
+    var records = {{ h.dump_json(records) | safe }};
+    var xAxis = "{{ xAxis }}",
+        yAxis = "{{ yAxis }}";
+    var data = $.map(records, function (record) {
+      var unixtime = new Date(record[xAxis]).getTime();
+      return [[parseInt(unixtime), parseFloat(record[yAxis])]];
+    });
+
+    $.plot("#graph", [data], { xaxis: { mode: "time" } });
+  }
+</script>
+
+<div style="height: 500px;" id="graph"> </div>
