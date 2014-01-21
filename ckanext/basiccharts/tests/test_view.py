@@ -54,19 +54,29 @@ class TestBasicCharts(object):
         assert not_empty in schema['yAxis'], '"yAxis" should be required'
 
     @mock.patch('ckan.plugins.toolkit.get_action')
-    def test_setup_template_variables_adds_xAxis_and_yAxis(self, _):
-        resource_view = {
-          'xAxis': 'theXAxis',
-          'yAxis': 'theYAxis'
+    def test_setup_template_variables_adds_resource(self, _):
+        resource = {
+          'id': 'resource_id',
+          'other_attribute': 'value'
         }
 
-        template_variables = self._setup_template_variables('resource_id',
-                resource_view)
+        template_variables = self._setup_template_variables(resource)
 
-        xAxis = template_variables.get('xAxis')
-        yAxis = template_variables.get('yAxis')
-        assert xAxis == 'theXAxis'
-        assert yAxis == 'theYAxis'
+        assert 'resource' in template_variables
+        assert template_variables['resource'] == resource
+
+    @mock.patch('ckan.plugins.toolkit.get_action')
+    def test_setup_template_variables_adds_resource_view(self, _):
+        resource_view = {
+          'id': 'resource_id',
+          'other_attribute': 'value'
+        }
+
+        template_variables = \
+          self._setup_template_variables(resource_view=resource_view)
+
+        assert 'resource_view' in template_variables
+        assert template_variables['resource_view'] == resource_view
 
     @mock.patch('ckan.plugins.toolkit.get_action')
     def test_setup_template_variables_adds_fields_without_the_id(self, get_action):
@@ -86,24 +96,10 @@ class TestBasicCharts(object):
         assert returned_fields is not None
         assert returned_fields == expected_fields
 
-    @mock.patch('ckan.plugins.toolkit.get_action')
-    def test_setup_template_variables_adds_records(self, get_action):
-        records = ['the', 'records']
-
-        get_action.return_value.return_value = {
-          'fields': {},
-          'records': records
-        }
-        template_variables = self._setup_template_variables()
-
-        returned_records = template_variables.get('records')
-        assert returned_records is not None
-        assert returned_records == records
-
-    def _setup_template_variables(self, resource_id='id', resource_view={}):
+    def _setup_template_variables(self, resource={'id': 'id'}, resource_view={}):
         context = {}
         data_dict = {
-            'resource': { 'id': resource_id },
+            'resource': resource,
             'resource_view': resource_view
         }
         return self.plugin.setup_template_variables(context, data_dict)

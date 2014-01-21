@@ -1,17 +1,27 @@
 {% resource 'basiccharts/main' %}
 
+{% block scripts %}
 <script>
-  window.onload = function() {
-    var records = {{ h.dump_json(records) | safe }};
-    var xAxis = "{{ xAxis }}",
-        yAxis = "{{ yAxis }}";
-    var data = $.map(records, function (record) {
-      var unixtime = new Date(record[xAxis]).getTime();
-      return [[parseInt(unixtime), parseFloat(record[yAxis])]];
-    });
+  window.onload = function () {
+    var endpoint = "http://localhost:5000/api",
+        resource_view = {{ h.dump_json(resource_view) | safe }},
+        resource = {{ h.dump_json(resource) | safe }};
 
-    $.plot("#graph", [data], { xaxis: { mode: "time" } });
-  }
+    resource.endpoint = endpoint;
+
+    recline.Backend.Ckan.query({}, resource).done(function(res) {
+      var data = $.map(res.hits, function (record) {
+        var unixtime = new Date(record[resource_view.xAxis]).getTime(),
+            x = parseInt(unixtime),
+            y = parseFloat(record[resource_view.yAxis]);
+
+        return [[x, y]];
+      });
+
+      $.plot("#graph", [data], { xaxis: { mode: "time" } });
+    });
+  };
 </script>
+{% endblock %}
 
 <div style="height: 500px;" id="graph"> </div>

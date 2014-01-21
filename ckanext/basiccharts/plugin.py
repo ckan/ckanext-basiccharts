@@ -30,14 +30,13 @@ class BasicCharts(p.SingletonPlugin):
         return data_dict['resource'].get('datastore_active', False)
 
     def setup_template_variables(self, context, data_dict):
-        fields = _get_fields(data_dict['resource'])
-        xAxis = data_dict['resource_view'].get('xAxis')
-        yAxis = data_dict['resource_view'].get('yAxis')
-        fields = [{'value': v['id']} for v in fields if v['id'] != '_id']
-        return {'fields': fields,
-                'xAxis': xAxis,
-                'yAxis': yAxis,
-                'records': _get_records_from_datastore(data_dict['resource'])}
+        resource = data_dict['resource']
+        resource_view = data_dict['resource_view']
+        fields = _get_fields_without_id(resource)
+
+        return {'resource': data_dict['resource'],
+                'resource_view': data_dict['resource_view'],
+                'fields': fields}
 
     def view_template(self, context, data_dict):
         return 'basiccharts_view.html'
@@ -46,21 +45,15 @@ class BasicCharts(p.SingletonPlugin):
         return 'basiccharts_form.html'
 
 
+def _get_fields_without_id(resource):
+    fields = _get_fields(resource)
+    return [{'value': v['id']} for v in fields if v['id'] != '_id']
+
 def _get_fields(resource):
-    limit = 0
-    return _datastore_search(resource, limit)['fields']
-
-def _get_records_from_datastore(resource):
-    limit = 5000
-    offset = 0
-    return _datastore_search(resource, limit, offset)['records']
-
-def _datastore_search(resource, limit=None, offset=None):
-    data = {'resource_id': resource['id']}
-    if limit:
-        data['limit'] = limit
-    if offset:
-        data['offset'] = offset
+    data = {
+      'resource_id': resource['id'],
+      'limit': 0
+    }
     result = p.toolkit.get_action('datastore_search')({}, data)
-    return result
+    return result['fields']
 
