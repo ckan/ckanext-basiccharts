@@ -4,10 +4,20 @@
 <script>
   (function() {
     var endpoint = "http://localhost:5000/api",
-        resource_view = {{ h.dump_json(resource_view) | safe }},
+        resourceView = {{ h.dump_json(resource_view) | safe }},
         resource = {{ h.dump_json(resource) | safe }};
-
     resource.endpoint = endpoint;
+
+    var parsers = {
+      integer: parseInt,
+      numeric: parseFloat,
+      text: function (x) {
+        return x;
+      },
+      timestamp: function (x) {
+        return new Date(x).getTime();
+      }
+    }
 
     window.onload = function() {
       // FIXME: We'll have problems with multiple elements on the same page.
@@ -16,15 +26,28 @@
     }
 
     function initPlot(elementId) {
-      recline.Backend.Ckan.query({}, resource).done(function(res) {
-        var data = prepare_data_for_plot(res.hits);
-        $.plot(elementId, data, { xaxis: { mode: "time" } });
+      $.when(
+        recline.Backend.Ckan.fetch(resource),
+        recline.Backend.Ckan.query({}, resource)
+      ).done(function(fetch, query) {
+        var fields = groupByFieldType(fetch.fields),
+            data = prepareDataForPlot(fields, query.hits),
+            config = plotConfig(fields);
+        $.plot(elementId, data, config);
       });
     }
 
-    function prepare_data_for_plot(records) {
-      var groupped_data = convert_and_group_data_by_series(records),
-          data = $.map(groupped_data, function(data, label) {
+    function groupByFieldType(fields) {
+      var result = {};
+      $.each(fields, function (i, field) {
+        result[field.id] = field.type;
+      });
+      return result;
+    }
+
+    function prepareDataForPlot(fields, records) {
+      var grouppedData = convertAndGroupDataBySeries(fields, records),
+          data = $.map(grouppedData, function(data, label) {
         return {
           label: label,
           data: data
@@ -34,13 +57,26 @@
       return data;
     }
 
-    function convert_and_group_data_by_series(records) {
+    function plotConfig(fields) {
+      var config = {},
+          xAxisType = fields[resourceView.xAxis],
+          yAxisType = fields[resourceView.yAxis];
+
+      if (xAxisType === "timestamp") {
+        config.xaxis = { mode: "time" }
+      }
+      if (yAxisType === "timestamp") {
+        config.yaxis = { mode: "time" }
+      }
+      return config;
+    }
+
+    function convertAndGroupDataBySeries(fields, records) {
       var result = {};
       $.each(records, function(i, record) {
-        var unixtime = new Date(record[resource_view.xAxis]).getTime(),
-            x = parseInt(unixtime),
-            y = parseFloat(record[resource_view.yAxis]),
-            series = record[resource_view.series];
+        var x = parsers[fields[resourceView.xAxis]](record[resourceView.xAxis]),
+            y = parsers[fields[resourceView.yAxis]](record[resourceView.yAxis]),
+            series = record[resourceView.series];
 
         result[series] = result[series] || []
         result[series].push([x, y])
