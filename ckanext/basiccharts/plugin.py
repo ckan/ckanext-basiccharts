@@ -16,6 +16,7 @@ class BasicCharts(p.SingletonPlugin):
 
     def info(self):
         schema = {
+            'series': [not_empty],
             'xAxis': [not_empty],
             'yAxis': [not_empty]
         }

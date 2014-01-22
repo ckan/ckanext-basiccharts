@@ -53,6 +53,15 @@ class TestBasicCharts(object):
         assert not_empty in schema['xAxis'], '"xAxis" should be required'
         assert not_empty in schema['yAxis'], '"yAxis" should be required'
 
+    def test_schema_has_series(self):
+        schema = self.plugin.info()['schema']
+        assert schema.get('series') is not None, 'Scheme should define "series"'
+
+    def test_schema_xAxis_and_yAxis_are_required(self):
+        schema = self.plugin.info()['schema']
+        not_empty = p.toolkit.get_validator('not_empty')
+        assert not_empty in schema['series'], '"series" should be required'
+
     @mock.patch('ckan.plugins.toolkit.get_action')
     def test_setup_template_variables_adds_resource(self, _):
         resource = {

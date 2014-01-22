@@ -2,26 +2,53 @@
 
 {% block scripts %}
 <script>
-  window.onload = function () {
+  (function() {
     var endpoint = "http://localhost:5000/api",
         resource_view = {{ h.dump_json(resource_view) | safe }},
         resource = {{ h.dump_json(resource) | safe }};
 
     resource.endpoint = endpoint;
 
-    recline.Backend.Ckan.query({}, resource).done(function(res) {
-      var data = $.map(res.hits, function (record) {
-        var unixtime = new Date(record[resource_view.xAxis]).getTime(),
-            x = parseInt(unixtime),
-            y = parseFloat(record[resource_view.yAxis]);
+    window.onload = function() {
+      // FIXME: We'll have problems with multiple elements on the same page.
+      // Right now, they'll have the same ID.
+      initPlot("#graph");
+    }
 
-        return [[x, y]];
+    function initPlot(elementId) {
+      recline.Backend.Ckan.query({}, resource).done(function(res) {
+        var data = prepare_data_for_plot(res.hits);
+        $.plot(elementId, data, { xaxis: { mode: "time" } });
+      });
+    }
+
+    function prepare_data_for_plot(records) {
+      var groupped_data = convert_and_group_data_by_series(records),
+          data = $.map(groupped_data, function(data, label) {
+        return {
+          label: label,
+          data: data
+        }
       });
 
-      $.plot("#graph", [data], { xaxis: { mode: "time" } });
-    });
-  };
+      return data;
+    }
+
+    function convert_and_group_data_by_series(records) {
+      var result = {};
+      $.each(records, function(i, record) {
+        var unixtime = new Date(record[resource_view.xAxis]).getTime(),
+            x = parseInt(unixtime),
+            y = parseFloat(record[resource_view.yAxis]),
+            series = record[resource_view.series];
+
+        result[series] = result[series] || []
+        result[series].push([x, y])
+      });
+      return result;
+    }
+  })();
 </script>
 {% endblock %}
 
-<div style="height: 500px;" id="graph"> </div>
+<div style="height: 500px;" id="graph"></div>
