@@ -31,7 +31,15 @@ this.recline.Backend.Ckan = this.recline.Backend.Ckan || {};
   // use either jQuery or Underscore Deferred depending on what is available
   var underscoreOrJquery = this.jQuery || this._;
   var _map = underscoreOrJquery.map;
-  var _each = underscoreOrJquery.each;
+  var _each = function _each(list, iterator) {
+      if (this.jQuery) {
+          this.jQuery.each(list, function (index, value) {
+              iterator(value, index);
+          });
+      } else {
+          this._.each(list, iterator);
+      }
+  }
   var _deferred = underscoreOrJquery.Deferred;
 
   // Default CKAN API endpoint used for requests (you can change this but it will affect every request!)
