@@ -44,24 +44,24 @@ class TestBasicCharts(object):
 
     def test_schema_has_filter_field(self):
         schema = self.plugin.info()['schema']
-        assert schema.get('filter_field') is not None, 'Scheme should define "filter_field"'
+        assert schema.get('filter_field') is not None, 'Schema should define "filter_field"'
 
     def test_schema_filter_field_doesnt_validate(self):
         schema = self.plugin.info()['schema']
-        assert len(schema['filter_field']) == 0, 'Scheme shouldn\'t have validators'
+        assert len(schema['filter_field']) == 0, 'Schema shouldn\'t have validators'
 
     def test_schema_has_filter_value(self):
         schema = self.plugin.info()['schema']
-        assert schema.get('filter_value') is not None, 'Scheme should define "filter_value"'
+        assert schema.get('filter_value') is not None, 'Schema should define "filter_value"'
 
     def test_schema_filter_value_doesnt_validate(self):
         schema = self.plugin.info()['schema']
-        assert len(schema['filter_value']) == 0, 'Scheme shouldn\'t have validators'
+        assert len(schema['filter_value']) == 0, 'Schema shouldn\'t have validators'
 
     def test_schema_has_xAxis_and_yAxis(self):
         schema = self.plugin.info()['schema']
-        assert schema.get('xAxis') is not None, 'Scheme should define "xAxis"'
-        assert schema.get('yAxis') is not None, 'Scheme should define "yAxis"'
+        assert schema.get('xAxis') is not None, 'Schema should define "xAxis"'
+        assert schema.get('yAxis') is not None, 'Schema should define "yAxis"'
 
     def test_schema_xAxis_and_yAxis_are_required(self):
         schema = self.plugin.info()['schema']
@@ -71,7 +71,7 @@ class TestBasicCharts(object):
 
     def test_schema_has_series(self):
         schema = self.plugin.info()['schema']
-        assert schema.get('series') is not None, 'Scheme should define "series"'
+        assert schema.get('series') is not None, 'Schema should define "series"'
 
     def test_schema_series_is_required(self):
         schema = self.plugin.info()['schema']
