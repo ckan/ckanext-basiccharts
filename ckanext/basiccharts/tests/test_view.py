@@ -57,7 +57,7 @@ class TestBasicCharts(object):
         schema = self.plugin.info()['schema']
         assert schema.get('series') is not None, 'Scheme should define "series"'
 
-    def test_schema_xAxis_and_yAxis_are_required(self):
+    def test_schema_series_is_required(self):
         schema = self.plugin.info()['schema']
         not_empty = p.toolkit.get_validator('not_empty')
         assert not_empty in schema['series'], '"series" should be required'
