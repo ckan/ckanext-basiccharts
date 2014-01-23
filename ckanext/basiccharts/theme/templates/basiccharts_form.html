@@ -1,5 +1,8 @@
 {% import 'macros/form.html' as form %}
 
+{{ form.select('filter_field', label=_('Filter'), options=fields, selected=resource_view['filter_field']) }}
+{{ form.input('filter_value', label=_('Filter Value'), value=resource_view['filter_value']) }}
+
 {{ form.select('series', label=_('Series'), options=fields, selected=resource_view['series']) }}
 
 {{ form.select('xAxis', label=_('X Axis'), options=fields, selected=resource_view['xAxis']) }}

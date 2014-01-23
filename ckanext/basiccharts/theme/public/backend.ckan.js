@@ -123,6 +123,26 @@ this.recline.Backend.Ckan = this.recline.Backend.Ckan || {};
     return dfd.promise();
   };
 
+  my.search_sql = function(sql, dataset) {
+    var wrapper;
+    if (dataset.endpoint) {
+      wrapper = my.DataStore(dataset.endpoint);
+    } else {
+      var out = my._parseCkanResourceUrl(dataset.url);
+      dataset.id = out.resource_id;
+      wrapper = my.DataStore(out.endpoint);
+    }
+    var dfd = new _deferred();
+    var jqxhr = wrapper.search_sql(sql);
+    jqxhr.done(function(results) {
+      var out = {
+        hits: results.result.records
+      };
+      dfd.resolve(out);
+    });
+    return dfd.promise();
+  }
+
   // ### DataStore
   //
   // Simple wrapper around the CKAN DataStore API
@@ -140,6 +160,18 @@ this.recline.Backend.Ckan = this.recline.Backend.Ckan || {};
       });
       return jqxhr;
     };
+
+    that.search_sql = function(sql) {
+      var searchUrl = that.endpoint + '/3/action/datastore_search_sql';
+      var jqxhr = jQuery.ajax({
+        url: searchUrl,
+        type: 'GET',
+        data: {
+          sql: sql
+        }
+      });
+      return jqxhr;
+    }
 
     return that;
   };

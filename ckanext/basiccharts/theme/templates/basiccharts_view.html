@@ -26,15 +26,28 @@
     }
 
     function initPlot(elementId) {
+      var sql = generateSqlQuery();
       $.when(
         recline.Backend.Ckan.fetch(resource),
-        recline.Backend.Ckan.query({}, resource)
+        recline.Backend.Ckan.search_sql(sql, resource)
       ).done(function(fetch, query) {
         var fields = groupByFieldType(fetch.fields),
             data = prepareDataForPlot(fields, query.hits),
             config = plotConfig(fields);
         $.plot(elementId, data, config);
       });
+    }
+
+    function generateSqlQuery() {
+      var sql = "SELECT * FROM \""+resource.id+"\"",
+          filterField = resourceView.filter_field,
+          filterValue = resourceView.filter_value;
+
+      if (filterField && filterValue) {
+        sql += " WHERE "+filterField+" = '"+filterValue+"'";
+      }
+
+      return sql;
     }
 
     function groupByFieldType(fields) {

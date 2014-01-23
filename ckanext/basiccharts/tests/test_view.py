@@ -42,6 +42,22 @@ class TestBasicCharts(object):
         schema = self.plugin.info().get('schema')
         assert schema is not None, 'Plugin should define schema'
 
+    def test_schema_has_filter_field(self):
+        schema = self.plugin.info()['schema']
+        assert schema.get('filter_field') is not None, 'Scheme should define "filter_field"'
+
+    def test_schema_filter_field_doesnt_validate(self):
+        schema = self.plugin.info()['schema']
+        assert len(schema['filter_field']) == 0, 'Scheme shouldn\'t have validators'
+
+    def test_schema_has_filter_value(self):
+        schema = self.plugin.info()['schema']
+        assert schema.get('filter_value') is not None, 'Scheme should define "filter_value"'
+
+    def test_schema_filter_value_doesnt_validate(self):
+        schema = self.plugin.info()['schema']
+        assert len(schema['filter_value']) == 0, 'Scheme shouldn\'t have validators'
+
     def test_schema_has_xAxis_and_yAxis(self):
         schema = self.plugin.info()['schema']
         assert schema.get('xAxis') is not None, 'Scheme should define "xAxis"'
