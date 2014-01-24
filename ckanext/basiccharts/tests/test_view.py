@@ -42,6 +42,15 @@ class TestBasicCharts(object):
         schema = self.plugin.info().get('schema')
         assert schema is not None, 'Plugin should define schema'
 
+    def test_schema_has_chart_type(self):
+        schema = self.plugin.info()['schema']
+        assert schema.get('chart_type') is not None, 'Schema should define "chart_type"'
+
+    def test_schema_chart_type_is_required(self):
+        schema = self.plugin.info()['schema']
+        not_empty = p.toolkit.get_validator('not_empty')
+        assert not_empty in schema['chart_type'], '"chart_type" should be required'
+
     def test_schema_has_filter_field(self):
         schema = self.plugin.info()['schema']
         assert schema.get('filter_field') is not None, 'Schema should define "filter_field"'
@@ -120,6 +129,18 @@ class TestBasicCharts(object):
         returned_fields = template_variables.get('fields')
         assert returned_fields is not None
         assert returned_fields == expected_fields
+
+    @mock.patch('ckan.plugins.toolkit.get_action')
+    def test_setup_template_variables_adds_chart_types(self, _):
+        chart_types = [
+            {'value': 'lines'},
+            {'value': 'bars'}
+        ]
+
+        template_variables = self._setup_template_variables()
+
+        assert 'chart_types' in template_variables
+        assert template_variables['chart_types'] == chart_types
 
     def _setup_template_variables(self, resource={'id': 'id'}, resource_view={}):
         context = {}

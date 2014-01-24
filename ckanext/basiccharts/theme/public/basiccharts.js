@@ -3,9 +3,8 @@ this.ckan.views = this.ckan.views || {};
 this.ckan.views.basiccharts = this.ckan.views.basiccharts || {};
 
 (function(self, $) {
-  var resource,
-      resourceView,
-      parsers = {
+  var resource, resourceView;
+  var parsers = {
         integer: parseInt,
         numeric: parseFloat,
         text: function (x) {
@@ -14,7 +13,7 @@ this.ckan.views.basiccharts = this.ckan.views.basiccharts || {};
         timestamp: function (x) {
           return new Date(x).getTime();
         }
-      }
+      };
 
   self.init = function init(elementId, _resource, _resourceView) {
     resource = _resource;
@@ -57,14 +56,23 @@ this.ckan.views.basiccharts = this.ckan.views.basiccharts || {};
 
   function prepareDataForPlot(fields, records) {
     var grouppedData = convertAndGroupDataBySeries(fields, records),
-        data = $.map(grouppedData, function(data, label) {
-      return {
-        label: label,
-        data: data
-      }
-    });
+        chartTypes = {
+          lines: { show: true },
+          bars: {
+            show: true,
+            barWidth: 60*60*24*30*1000 // 1 month
+          }
+        };
 
-    return data;
+    return $.map(grouppedData, function(data, label) {
+      var dataForPlot = {
+        label: label,
+        data: data,
+      }
+      dataForPlot[resourceView.chart_type] = chartTypes[resourceView.chart_type];
+
+      return dataForPlot;
+    });
   }
 
   function plotConfig(fields) {

@@ -10,12 +10,18 @@ class BasicCharts(p.SingletonPlugin):
     p.implements(p.IResourceView, inherit=True)
     p.implements(p.IPackageController, inherit=True)
 
+    CHART_TYPES = [
+        {'value': 'lines'},
+        {'value': 'bars'}
+    ]
+
     def update_config(self, config):
         p.toolkit.add_template_directory(config, 'theme/templates')
         p.toolkit.add_resource('theme/public', 'basiccharts')
 
     def info(self):
         schema = {
+            'chart_type': [not_empty],
             'filter_field': [],
             'filter_value': [],
             'series': [not_empty],
@@ -39,7 +45,8 @@ class BasicCharts(p.SingletonPlugin):
 
         return {'resource': data_dict['resource'],
                 'resource_view': data_dict['resource_view'],
-                'fields': fields}
+                'fields': fields,
+                'chart_types': self.CHART_TYPES}
 
     def view_template(self, context, data_dict):
         return 'basiccharts_view.html'
