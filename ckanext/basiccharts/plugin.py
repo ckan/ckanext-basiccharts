@@ -25,8 +25,8 @@ class BasicCharts(p.SingletonPlugin):
             'filter_field': [],
             'filter_value': [],
             'series': [not_empty],
-            'xAxis': [not_empty],
-            'yAxis': [not_empty]
+            'x_axis': [not_empty],
+            'y_axis': [not_empty]
         }
 
         return {'name': 'basiccharts',

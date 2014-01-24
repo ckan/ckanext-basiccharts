@@ -67,16 +67,16 @@ class TestBasicCharts(object):
         schema = self.plugin.info()['schema']
         assert len(schema['filter_value']) == 0, 'Schema shouldn\'t have validators'
 
-    def test_schema_has_xAxis_and_yAxis(self):
+    def test_schema_has_x_axis_and_y_axis(self):
         schema = self.plugin.info()['schema']
-        assert schema.get('xAxis') is not None, 'Schema should define "xAxis"'
-        assert schema.get('yAxis') is not None, 'Schema should define "yAxis"'
+        assert schema.get('x_axis') is not None, 'Schema should define "x_axis"'
+        assert schema.get('y_axis') is not None, 'Schema should define "y_axis"'
 
-    def test_schema_xAxis_and_yAxis_are_required(self):
+    def test_schema_x_axis_and_y_axis_are_required(self):
         schema = self.plugin.info()['schema']
         not_empty = p.toolkit.get_validator('not_empty')
-        assert not_empty in schema['xAxis'], '"xAxis" should be required'
-        assert not_empty in schema['yAxis'], '"yAxis" should be required'
+        assert not_empty in schema['x_axis'], '"x_axis" should be required'
+        assert not_empty in schema['y_axis'], '"y_axis" should be required'
 
     def test_schema_has_series(self):
         schema = self.plugin.info()['schema']

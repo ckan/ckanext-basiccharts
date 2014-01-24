@@ -77,8 +77,8 @@ this.ckan.views.basiccharts = this.ckan.views.basiccharts || {};
 
   function plotConfig(fields) {
     var config = {},
-        xAxisType = fields[resourceView.xAxis],
-        yAxisType = fields[resourceView.yAxis];
+        xAxisType = fields[resourceView.x_axis],
+        yAxisType = fields[resourceView.y_axis];
 
     if (xAxisType === "timestamp") {
       config.xaxis = { mode: "time" }
@@ -92,8 +92,8 @@ this.ckan.views.basiccharts = this.ckan.views.basiccharts || {};
   function convertAndGroupDataBySeries(fields, records) {
     var result = {};
     $.each(records, function(i, record) {
-      var x = parsers[fields[resourceView.xAxis]](record[resourceView.xAxis]),
-          y = parsers[fields[resourceView.yAxis]](record[resourceView.yAxis]),
+      var x = parsers[fields[resourceView.x_axis]](record[resourceView.x_axis]),
+          y = parsers[fields[resourceView.y_axis]](record[resourceView.y_axis]),
           series = record[resourceView.series];
 
       result[series] = result[series] || []
