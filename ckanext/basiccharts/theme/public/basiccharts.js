@@ -28,8 +28,8 @@ this.ckan.views.basiccharts = this.ckan.views.basiccharts || {};
       recline.Backend.Ckan.search_sql(sql, resource)
     ).done(function(fetch, query) {
       var fields = groupByFieldType(fetch.fields),
-          data = prepareDataForPlot(fields, query.hits),
-          config = plotConfig(fields);
+          config = plotConfig(fields),
+          data = prepareDataForPlot(fields, query.hits, config.xaxis.mode);
       $.plot(elementId, data, config);
     });
   }
@@ -54,13 +54,15 @@ this.ckan.views.basiccharts = this.ckan.views.basiccharts || {};
     return result;
   }
 
-  function prepareDataForPlot(fields, records) {
+  function prepareDataForPlot(fields, records, xAxisMode) {
     var grouppedData = convertAndGroupDataBySeries(fields, records),
+        barWidth = (xAxisMode === "time") ? 60*60*24*30*1000 : 0.5;
         chartTypes = {
           lines: { show: true },
           bars: {
             show: true,
-            barWidth: 60*60*24*30*1000 // 1 month
+            align: "center",
+            barWidth: barWidth
           }
         };
 
@@ -78,14 +80,17 @@ this.ckan.views.basiccharts = this.ckan.views.basiccharts || {};
   function plotConfig(fields) {
     var config = {},
         xAxisType = fields[resourceView.x_axis],
-        yAxisType = fields[resourceView.y_axis];
+        yAxisType = fields[resourceView.y_axis],
+        axisConfigByType = {
+          timestamp: { mode: "time" },
+          text: { mode: "categories" },
+          numeric: {},
+          integer: {}
+        };
 
-    if (xAxisType === "timestamp") {
-      config.xaxis = { mode: "time" }
-    }
-    if (yAxisType === "timestamp") {
-      config.yaxis = { mode: "time" }
-    }
+    config.xaxis = axisConfigByType[xAxisType];
+    config.yaxis = axisConfigByType[yAxisType];
+
     return config;
   }
 
