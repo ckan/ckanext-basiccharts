@@ -3,6 +3,8 @@ this.ckan.views = this.ckan.views || {};
 this.ckan.views.basiccharts = this.ckan.views.basiccharts || {};
 
 (function(self, $) {
+  "use strict";
+
   var resource, resourceView;
   var parsers = {
         integer: parseInt,
@@ -56,7 +58,7 @@ this.ckan.views.basiccharts = this.ckan.views.basiccharts || {};
 
   function prepareDataForPlot(fields, records, xAxisMode) {
     var grouppedData = convertAndGroupDataBySeries(fields, records),
-        barWidth = (xAxisMode === "time") ? 60*60*24*30*1000 : 0.5;
+        barWidth = (xAxisMode === "time") ? 60*60*24*30*1000 : 0.5,
         chartTypes = {
           lines: { show: true },
           bars: {
