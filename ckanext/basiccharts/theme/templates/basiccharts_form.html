@@ -1,8 +1,12 @@
 {% import 'macros/form.html' as form %}
 
 {{
-    form.select('chart_type', label=_('Type'), options=chart_types,
-        selected=resource_view['chart_type'], is_required=true)
+    form.select('filter_field', label=_('Filter'), options=fields,
+        selected=resource_view['filter_field'])
+}}
+{{
+    form.input('filter_value', label=_('Filter Value'),
+        value=resource_view['filter_value'])
 }}
 
 {{
@@ -11,19 +15,8 @@
 }}
 
 {{
-    form.select('x_axis', label=_('X Axis'), options=fields,
-        selected=resource_view['x_axis'], is_required=true)
-}}
-{{
     form.select('y_axis', label=_('Y Axis'), options=fields,
         selected=resource_view['y_axis'], is_required=true)
 }}
 
-{{
-    form.select('filter_field', label=_('Filter'), options=fields,
-        selected=resource_view['filter_field'])
-}}
-{{
-    form.input('filter_value', label=_('Filter Value'),
-        value=resource_view['filter_value'])
-}}
+{% block form %}{% endblock %}

@@ -24,10 +24,6 @@ class TestBasicCharts(object):
 
         assert templates_path in config['extra_template_paths'], templates_path
 
-    def test_plugin_isnt_iframed(self):
-        iframed = self.plugin.info().get('iframed', True)
-        assert not iframed, 'Plugin should not be iframed'
-
     def test_can_view_only_if_datastore_is_active(self):
         active_datastore_data_dict = {
             'resource': { 'datastore_active': True }
@@ -39,51 +35,49 @@ class TestBasicCharts(object):
         assert not self.plugin.can_view(inactive_datastore_data_dict)
 
     def test_schema_exists(self):
-        schema = self.plugin.info().get('schema')
+        schema = self.plugin.schema()
         assert schema is not None, 'Plugin should define schema'
 
     def test_schema_has_chart_type(self):
-        schema = self.plugin.info()['schema']
+        schema = self.plugin.schema()
         assert schema.get('chart_type') is not None, 'Schema should define "chart_type"'
 
     def test_schema_chart_type_is_required(self):
-        schema = self.plugin.info()['schema']
+        schema = self.plugin.schema()
         not_empty = p.toolkit.get_validator('not_empty')
         assert not_empty in schema['chart_type'], '"chart_type" should be required'
 
     def test_schema_has_filter_field(self):
-        schema = self.plugin.info()['schema']
+        schema = self.plugin.schema()
         assert schema.get('filter_field') is not None, 'Schema should define "filter_field"'
 
     def test_schema_filter_field_doesnt_validate(self):
-        schema = self.plugin.info()['schema']
+        schema = self.plugin.schema()
         assert len(schema['filter_field']) == 0, 'Schema shouldn\'t have validators'
 
     def test_schema_has_filter_value(self):
-        schema = self.plugin.info()['schema']
+        schema = self.plugin.schema()
         assert schema.get('filter_value') is not None, 'Schema should define "filter_value"'
 
     def test_schema_filter_value_doesnt_validate(self):
-        schema = self.plugin.info()['schema']
+        schema = self.plugin.schema()
         assert len(schema['filter_value']) == 0, 'Schema shouldn\'t have validators'
 
-    def test_schema_has_x_axis_and_y_axis(self):
-        schema = self.plugin.info()['schema']
-        assert schema.get('x_axis') is not None, 'Schema should define "x_axis"'
+    def test_schema_has_y_axis(self):
+        schema = self.plugin.schema()
         assert schema.get('y_axis') is not None, 'Schema should define "y_axis"'
 
-    def test_schema_x_axis_and_y_axis_are_required(self):
-        schema = self.plugin.info()['schema']
+    def test_schema_y_axis_is_required(self):
+        schema = self.plugin.schema()
         not_empty = p.toolkit.get_validator('not_empty')
-        assert not_empty in schema['x_axis'], '"x_axis" should be required'
         assert not_empty in schema['y_axis'], '"y_axis" should be required'
 
     def test_schema_has_series(self):
-        schema = self.plugin.info()['schema']
+        schema = self.plugin.schema()
         assert schema.get('series') is not None, 'Schema should define "series"'
 
     def test_schema_series_is_required(self):
-        schema = self.plugin.info()['schema']
+        schema = self.plugin.schema()
         not_empty = p.toolkit.get_validator('not_empty')
         assert not_empty in schema['series'], '"series" should be required'
 
@@ -130,18 +124,6 @@ class TestBasicCharts(object):
         assert returned_fields is not None
         assert returned_fields == expected_fields
 
-    @mock.patch('ckan.plugins.toolkit.get_action')
-    def test_setup_template_variables_adds_chart_types(self, _):
-        chart_types = [
-            {'value': 'lines'},
-            {'value': 'bars'}
-        ]
-
-        template_variables = self._setup_template_variables()
-
-        assert 'chart_types' in template_variables
-        assert template_variables['chart_types'] == chart_types
-
     def _setup_template_variables(self, resource={'id': 'id'}, resource_view={}):
         context = {}
         data_dict = {
@@ -149,3 +131,37 @@ class TestBasicCharts(object):
             'resource_view': resource_view
         }
         return self.plugin.setup_template_variables(context, data_dict)
+
+
+class TestLineChart(TestBasicCharts):
+
+    @classmethod
+    def setup_class(cls):
+        p.load('basiccharts')
+        p.load('linechart')
+        cls.plugin = p.get_plugin('linechart')
+
+    @classmethod
+    def teardown_class(cls):
+        p.unload('linechart')
+        p.unload('basiccharts')
+
+    def test_plugin_isnt_iframed(self):
+        iframed = self.plugin.info().get('iframed', True)
+        assert not iframed, 'Plugin should not be iframed'
+
+    def test_schema_has_x_axis(self):
+        schema = self.plugin.info()['schema']
+        assert schema.get('x_axis') is not None, 'Schema should define "x_axis"'
+
+    def test_schema_x_axis_is_required(self):
+        schema = self.plugin.info()['schema']
+        not_empty = p.toolkit.get_validator('not_empty')
+        assert not_empty in schema['x_axis'], '"x_axis" should be required'
+
+    @mock.patch('ckan.plugins.toolkit.get_action')
+    def test_setup_template_variables_define_correct_chart_type(self, _):
+        template_variables = self._setup_template_variables()
+        assert 'chart_type' in template_variables
+        assert template_variables['chart_type'] == 'line'
+

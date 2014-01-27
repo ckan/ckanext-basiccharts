@@ -10,30 +10,20 @@ class BasicCharts(p.SingletonPlugin):
     p.implements(p.IResourceView, inherit=True)
     p.implements(p.IPackageController, inherit=True)
 
-    CHART_TYPES = [
-        {'value': 'lines'},
-        {'value': 'bars'}
-    ]
-
     def update_config(self, config):
         p.toolkit.add_template_directory(config, 'theme/templates')
         p.toolkit.add_resource('theme/public', 'basiccharts')
 
-    def info(self):
+    def schema(self):
         schema = {
             'chart_type': [not_empty],
             'filter_field': [],
             'filter_value': [],
             'series': [not_empty],
-            'x_axis': [not_empty],
             'y_axis': [not_empty]
         }
 
-        return {'name': 'basiccharts',
-                'title': 'Basic Charts',
-                'icon': 'bar-chart',
-                'schema': schema,
-                'iframed': False}
+        return schema
 
     def can_view(self, data_dict):
         return data_dict['resource'].get('datastore_active', False)
@@ -45,14 +35,36 @@ class BasicCharts(p.SingletonPlugin):
 
         return {'resource': data_dict['resource'],
                 'resource_view': data_dict['resource_view'],
-                'fields': fields,
-                'chart_types': self.CHART_TYPES}
+                'fields': fields}
 
     def view_template(self, context, data_dict):
         return 'basiccharts_view.html'
 
     def form_template(self, context, data_dict):
         return 'basiccharts_form.html'
+
+
+class LineChart(BasicCharts):
+    def info(self):
+        schema = super(self.__class__, self).schema()
+        schema['x_axis'] = [not_empty]
+
+        return {'name': 'linechart',
+                'title': 'Line Chart',
+                'icon': 'bar-chart',
+                'schema': schema,
+                'iframed': False}
+
+    def setup_template_variables(self, context, data_dict):
+        template_variables = super(self.__class__, self)\
+            .setup_template_variables(context, data_dict)
+
+        template_variables['chart_type'] = 'line'
+
+        return template_variables
+
+    def form_template(self, context, data_dict):
+        return 'linechart_form.html'
 
 
 def _get_fields_without_id(resource):
