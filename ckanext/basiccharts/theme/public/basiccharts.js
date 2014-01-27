@@ -5,7 +5,7 @@ this.ckan.views.basiccharts = this.ckan.views.basiccharts || {};
 (function(self, $) {
   "use strict";
 
-  var resource, resourceView;
+  var resource, params;
   var parsers = {
         integer: parseInt,
         numeric: parseFloat,
@@ -17,9 +17,9 @@ this.ckan.views.basiccharts = this.ckan.views.basiccharts || {};
         }
       };
 
-  self.init = function init(elementId, _resource, _resourceView) {
+  self.init = function init(elementId, _resource, _params) {
     resource = _resource;
-    resourceView = _resourceView;
+    params = _params;
     initPlot(elementId);
   }
 
@@ -38,8 +38,8 @@ this.ckan.views.basiccharts = this.ckan.views.basiccharts || {};
 
   function generateSqlQuery() {
     var sql = "SELECT * FROM \""+resource.id+"\"",
-        filterField = resourceView.filter_field,
-        filterValue = resourceView.filter_value;
+        filterField = params.filter_field,
+        filterValue = params.filter_value;
 
     if (filterField && filterValue) {
       sql += " WHERE "+filterField+" = '"+filterValue+"'";
@@ -73,7 +73,7 @@ this.ckan.views.basiccharts = this.ckan.views.basiccharts || {};
         label: label,
         data: data,
       }
-      dataForPlot[resourceView.chart_type] = chartTypes[resourceView.chart_type];
+      dataForPlot[params.chart_type] = chartTypes[params.chart_type];
 
       return dataForPlot;
     });
@@ -81,8 +81,8 @@ this.ckan.views.basiccharts = this.ckan.views.basiccharts || {};
 
   function plotConfig(fields) {
     var config = {},
-        xAxisType = fields[resourceView.x_axis],
-        yAxisType = fields[resourceView.y_axis],
+        xAxisType = fields[params.x_axis],
+        yAxisType = fields[params.y_axis],
         axisConfigByType = {
           timestamp: { mode: "time" },
           text: { mode: "categories" },
@@ -99,9 +99,9 @@ this.ckan.views.basiccharts = this.ckan.views.basiccharts || {};
   function convertAndGroupDataBySeries(fields, records) {
     var result = {};
     $.each(records, function(i, record) {
-      var x = parsers[fields[resourceView.x_axis]](record[resourceView.x_axis]),
-          y = parsers[fields[resourceView.y_axis]](record[resourceView.y_axis]),
-          series = record[resourceView.series];
+      var x = parsers[fields[params.x_axis]](record[params.x_axis]),
+          y = parsers[fields[params.y_axis]](record[params.y_axis]),
+          series = record[params.series];
 
       result[series] = result[series] || []
       result[series].push([x, y])

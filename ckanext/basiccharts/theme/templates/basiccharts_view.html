@@ -5,14 +5,21 @@
   window.onload = function() {
     var endpoint = "http://localhost:5000/api",
         resourceView = {{ h.dump_json(resource_view) | safe }},
+        params = overridenDefaultParamsUsingQueryString(resourceView),
         resource = {{ h.dump_json(resource) | safe }};
     resource.endpoint = endpoint;
 
     // FIXME: We'll have problems with multiple elements on the same page.
     // Right now, they'll have the same ID.
-    ckan.views.basiccharts.init("#graph", resource, resourceView);
+    ckan.views.basiccharts.init("#graph", resource, params);
   }
 
+function overridenDefaultParamsUsingQueryString(defaultParams) {
+  var routeParams = window.location.search.queryStringToJSON(),
+      params = $.extend({}, defaultParams, routeParams);
+
+  return params;
+}
 </script>
 {% endblock %}
 
