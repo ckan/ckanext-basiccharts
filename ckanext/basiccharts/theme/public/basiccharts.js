@@ -80,7 +80,7 @@ this.ckan.views.basiccharts = this.ckan.views.basiccharts || {};
   }
 
   function plotConfig(fields) {
-    var config = {},
+    var config,
         xAxisType = fields[params.x_axis],
         yAxisType = fields[params.y_axis],
         axisConfigByType = {
@@ -90,8 +90,17 @@ this.ckan.views.basiccharts = this.ckan.views.basiccharts || {};
           integer: {}
         };
 
-    config.xaxis = axisConfigByType[xAxisType];
-    config.yaxis = axisConfigByType[yAxisType];
+    config = {
+      xaxis: axisConfigByType[xAxisType],
+      yaxis: axisConfigByType[yAxisType],
+      grid: {
+        hoverable: true
+      },
+      tooltip: true,
+      tooltipOpts: {
+        content: "%s | "+params.x_axis+": %x | "+params.y_axis+": %y"
+      }
+    }
 
     return config;
   }
