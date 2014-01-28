@@ -1,21 +1,23 @@
 import os
 import inspect
 import mock
+import nose.tools
 import pylons.config as config
 
 import ckan.plugins as p
 
+import ckanext.basiccharts
 
-class TestBasicCharts(object):
+
+class TestBaseChart(object):
 
     @classmethod
     def setup_class(cls):
-        p.load('basiccharts')
-        cls.plugin = p.get_plugin('basiccharts')
+        cls.plugin = ckanext.basiccharts.plugin.BaseChart()
 
-    @classmethod
-    def teardown_class(cls):
-        p.unload('basiccharts')
+    @nose.tools.raises(p.PluginNotFoundException)
+    def test_plugin_cant_be_loaded(self):
+        p.load('basechart')
 
     def test_plugin_templates_path_is_added_to_config(self):
         filename = inspect.getfile(inspect.currentframe())
@@ -130,7 +132,7 @@ class TestBasicCharts(object):
         return self.plugin.setup_template_variables(context, data_dict)
 
 
-class TestLineChart(TestBasicCharts):
+class TestLineChart(TestBaseChart):
 
     @classmethod
     def setup_class(cls):

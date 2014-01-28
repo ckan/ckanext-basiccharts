@@ -3,8 +3,8 @@ import ckan.plugins as p
 not_empty = p.toolkit.get_validator('not_empty')
 
 
-class BasicCharts(p.SingletonPlugin):
-    '''This extension makes basic charts'''
+class BaseChart(p.SingletonPlugin):
+    '''Class with methods common to all basic charts'''
 
     CHART_TYPE = 'base'
 
@@ -46,7 +46,7 @@ class BasicCharts(p.SingletonPlugin):
         return 'basiccharts_form.html'
 
 
-class LineChart(BasicCharts):
+class LineChart(BaseChart):
 
     CHART_TYPE = 'lines'
 
