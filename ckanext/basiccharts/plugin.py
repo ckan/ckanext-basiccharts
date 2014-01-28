@@ -42,10 +42,10 @@ class BaseChart(p.SingletonPlugin):
                 'chart_type': self.CHART_TYPE}
 
     def view_template(self, context, data_dict):
-        return 'basiccharts_view.html'
+        return 'basechart_view.html'
 
     def form_template(self, context, data_dict):
-        return 'basiccharts_form.html'
+        return 'basechart_form.html'
 
 
 class LineChart(BaseChart):
