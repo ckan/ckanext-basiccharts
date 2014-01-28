@@ -54,7 +54,6 @@ this.ckan.views.basiccharts = this.ckan.views.basiccharts || {};
       }
     }
 
-    console.log(sql);
     return sql;
   }
 
