@@ -10,11 +10,38 @@
         resource = {{ h.dump_json(resource) | safe }};
     resource.endpoint = endpoint;
     params.chart_type = chartType;
+    params.filters = setupFilters(params);
+
+    function sortData(data) {
+      var seriesOrder = params.filters[params.series];
+
+      if (seriesOrder) {
+        return data.sort(function (a, b) {
+          return seriesOrder.indexOf(a.label) - seriesOrder.indexOf(b.label);
+        });
+      } else {
+        return data;
+      }
+    }
 
     // FIXME: We'll have problems with multiple elements on the same page.
     // Right now, they'll have the same ID.
-    ckan.views.basiccharts.init("#graph", resource, params);
+    ckan.views.basiccharts.init("#graph", resource, params, sortData);
   }
+
+// TODO: Remove this when we finish doing the form for multiple filters
+function setupFilters(params) {
+  var filters = {
+    region: ["Pakistan", "Punjaab", "Bagh"]
+  };
+
+  if (params.filter_field && params.filter_value) {
+    filters[params.filter_field] = filters[params.filter_field] || [];
+    filters[params.filter_field].unshift(params.filter_value);
+  }
+
+  return filters;
+}
 
 function overridenDefaultParamsUsingQueryString(defaultParams) {
   var routeParams = window.location.search.queryStringToJSON(),

@@ -17,13 +17,13 @@ this.ckan.views.basiccharts = this.ckan.views.basiccharts || {};
         }
       };
 
-  self.init = function init(elementId, _resource, _params) {
+  self.init = function init(elementId, _resource, _params, sortData) {
     resource = _resource;
     params = _params;
-    initPlot(elementId);
+    initPlot(elementId, sortData);
   }
 
-  function initPlot(elementId) {
+  function initPlot(elementId, sortData) {
     var sql = generateSqlQuery();
     $.when(
       recline.Backend.Ckan.fetch(resource),
@@ -32,19 +32,29 @@ this.ckan.views.basiccharts = this.ckan.views.basiccharts || {};
       var fields = groupByFieldType(fetch.fields),
           config = plotConfig(fields),
           data = prepareDataForPlot(fields, query.hits, config.xaxis);
+
+      if (sortData) {
+        data = sortData(data);
+      }
+
       $.plot(elementId, data, config);
     });
   }
 
   function generateSqlQuery() {
     var sql = "SELECT * FROM \""+resource.id+"\"",
-        filterField = params.filter_field,
-        filterValue = params.filter_value;
+        filters = params.filters;
 
-    if (filterField && filterValue) {
-      sql += " WHERE "+filterField+" = '"+filterValue+"'";
+    if (filters) {
+      var filtersSQL = $.map(filters, function (values, field) {
+        return field + " IN ('" + values.join("','") + "')";
+      })
+      if (filtersSQL.length > 0) {
+        sql += " WHERE " + filtersSQL.join(" AND ");
+      }
     }
 
+    console.log(sql);
     return sql;
   }
 
