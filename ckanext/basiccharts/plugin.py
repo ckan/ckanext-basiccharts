@@ -16,7 +16,7 @@ class BaseChart(p.SingletonPlugin):
         p.toolkit.add_template_directory(config, 'theme/templates')
         p.toolkit.add_resource('theme/public', 'basiccharts')
 
-    def schema(self):
+    def info(self):
         schema = {
             'filter_field': [],
             'filter_value': [],
@@ -24,7 +24,9 @@ class BaseChart(p.SingletonPlugin):
             'y_axis': [not_empty]
         }
 
-        return schema
+        return {'icon': 'bar-chart',
+                'schema': schema,
+                'iframed': False}
 
     def can_view(self, data_dict):
         return data_dict['resource'].get('datastore_active', False)
@@ -51,14 +53,12 @@ class LineChart(BaseChart):
     CHART_TYPE = 'lines'
 
     def info(self):
-        schema = super(LineChart, self).schema()
-        schema['x_axis'] = [not_empty]
+        info = super(LineChart, self).info()
+        info['schema']['x_axis'] = [not_empty]
+        info['name'] = 'linechart'
+        info['title'] = 'Line Chart'
 
-        return {'name': 'linechart',
-                'title': 'Line Chart',
-                'icon': 'bar-chart',
-                'schema': schema,
-                'iframed': False}
+        return info
 
     def form_template(self, context, data_dict):
         return 'linechart_form.html'

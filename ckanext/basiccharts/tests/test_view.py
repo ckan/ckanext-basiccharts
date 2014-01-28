@@ -37,42 +37,46 @@ class TestBaseChart(object):
         assert not self.plugin.can_view(inactive_datastore_data_dict)
 
     def test_schema_exists(self):
-        schema = self.plugin.schema()
+        schema = self.plugin.info()['schema']
         assert schema is not None, 'Plugin should define schema'
 
     def test_schema_has_filter_field(self):
-        schema = self.plugin.schema()
+        schema = self.plugin.info()['schema']
         assert schema.get('filter_field') is not None, 'Schema should define "filter_field"'
 
     def test_schema_filter_field_doesnt_validate(self):
-        schema = self.plugin.schema()
+        schema = self.plugin.info()['schema']
         assert len(schema['filter_field']) == 0, 'Schema shouldn\'t have validators'
 
     def test_schema_has_filter_value(self):
-        schema = self.plugin.schema()
+        schema = self.plugin.info()['schema']
         assert schema.get('filter_value') is not None, 'Schema should define "filter_value"'
 
     def test_schema_filter_value_doesnt_validate(self):
-        schema = self.plugin.schema()
+        schema = self.plugin.info()['schema']
         assert len(schema['filter_value']) == 0, 'Schema shouldn\'t have validators'
 
     def test_schema_has_y_axis(self):
-        schema = self.plugin.schema()
+        schema = self.plugin.info()['schema']
         assert schema.get('y_axis') is not None, 'Schema should define "y_axis"'
 
     def test_schema_y_axis_is_required(self):
-        schema = self.plugin.schema()
+        schema = self.plugin.info()['schema']
         not_empty = p.toolkit.get_validator('not_empty')
         assert not_empty in schema['y_axis'], '"y_axis" should be required'
 
     def test_schema_has_series(self):
-        schema = self.plugin.schema()
+        schema = self.plugin.info()['schema']
         assert schema.get('series') is not None, 'Schema should define "series"'
 
     def test_schema_series_is_required(self):
-        schema = self.plugin.schema()
+        schema = self.plugin.info()['schema']
         not_empty = p.toolkit.get_validator('not_empty')
         assert not_empty in schema['series'], '"series" should be required'
+
+    def test_plugin_isnt_iframed(self):
+        iframed = self.plugin.info().get('iframed', True)
+        assert not iframed, 'Plugin should not be iframed'
 
     @mock.patch('ckan.plugins.toolkit.get_action')
     def test_setup_template_variables_adds_resource(self, _):
@@ -142,10 +146,6 @@ class TestLineChart(TestBaseChart):
     @classmethod
     def teardown_class(cls):
         p.unload('linechart')
-
-    def test_plugin_isnt_iframed(self):
-        iframed = self.plugin.info().get('iframed', True)
-        assert not iframed, 'Plugin should not be iframed'
 
     def test_schema_has_x_axis(self):
         schema = self.plugin.info()['schema']
