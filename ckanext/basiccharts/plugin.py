@@ -6,6 +6,8 @@ not_empty = p.toolkit.get_validator('not_empty')
 class BasicCharts(p.SingletonPlugin):
     '''This extension makes basic charts'''
 
+    CHART_TYPE = 'base'
+
     p.implements(p.IConfigurer, inherit=True)
     p.implements(p.IResourceView, inherit=True)
     p.implements(p.IPackageController, inherit=True)
@@ -16,7 +18,6 @@ class BasicCharts(p.SingletonPlugin):
 
     def schema(self):
         schema = {
-            'chart_type': [not_empty],
             'filter_field': [],
             'filter_value': [],
             'series': [not_empty],
@@ -35,7 +36,8 @@ class BasicCharts(p.SingletonPlugin):
 
         return {'resource': data_dict['resource'],
                 'resource_view': data_dict['resource_view'],
-                'fields': fields}
+                'fields': fields,
+                'chart_type': self.CHART_TYPE}
 
     def view_template(self, context, data_dict):
         return 'basiccharts_view.html'
@@ -45,8 +47,11 @@ class BasicCharts(p.SingletonPlugin):
 
 
 class LineChart(BasicCharts):
+
+    CHART_TYPE = 'lines'
+
     def info(self):
-        schema = super(self.__class__, self).schema()
+        schema = super(LineChart, self).schema()
         schema['x_axis'] = [not_empty]
 
         return {'name': 'linechart',
@@ -55,16 +60,20 @@ class LineChart(BasicCharts):
                 'schema': schema,
                 'iframed': False}
 
-    def setup_template_variables(self, context, data_dict):
-        template_variables = super(self.__class__, self)\
-            .setup_template_variables(context, data_dict)
-
-        template_variables['chart_type'] = 'line'
-
-        return template_variables
-
     def form_template(self, context, data_dict):
         return 'linechart_form.html'
+
+
+class BarChart(LineChart):
+
+    CHART_TYPE = 'bars'
+
+    def info(self):
+        info = super(BarChart, self).info()
+        info['name'] = 'barchart'
+        info['title'] = 'Bar Chart'
+
+        return info
 
 
 def _get_fields_without_id(resource):
@@ -78,4 +87,3 @@ def _get_fields(resource):
     }
     result = p.toolkit.get_action('datastore_search')({}, data)
     return result['fields']
-

@@ -38,15 +38,6 @@ class TestBasicCharts(object):
         schema = self.plugin.schema()
         assert schema is not None, 'Plugin should define schema'
 
-    def test_schema_has_chart_type(self):
-        schema = self.plugin.schema()
-        assert schema.get('chart_type') is not None, 'Schema should define "chart_type"'
-
-    def test_schema_chart_type_is_required(self):
-        schema = self.plugin.schema()
-        not_empty = p.toolkit.get_validator('not_empty')
-        assert not_empty in schema['chart_type'], '"chart_type" should be required'
-
     def test_schema_has_filter_field(self):
         schema = self.plugin.schema()
         assert schema.get('filter_field') is not None, 'Schema should define "filter_field"'
@@ -124,6 +115,12 @@ class TestBasicCharts(object):
         assert returned_fields is not None
         assert returned_fields == expected_fields
 
+    @mock.patch('ckan.plugins.toolkit.get_action')
+    def test_setup_template_variables_adds_chart_type(self, _):
+        template_variables = self._setup_template_variables()
+        assert 'chart_type' in template_variables
+        assert template_variables['chart_type'] == self.plugin.CHART_TYPE
+
     def _setup_template_variables(self, resource={'id': 'id'}, resource_view={}):
         context = {}
         data_dict = {
@@ -137,14 +134,12 @@ class TestLineChart(TestBasicCharts):
 
     @classmethod
     def setup_class(cls):
-        p.load('basiccharts')
         p.load('linechart')
         cls.plugin = p.get_plugin('linechart')
 
     @classmethod
     def teardown_class(cls):
         p.unload('linechart')
-        p.unload('basiccharts')
 
     def test_plugin_isnt_iframed(self):
         iframed = self.plugin.info().get('iframed', True)
@@ -159,9 +154,20 @@ class TestLineChart(TestBasicCharts):
         not_empty = p.toolkit.get_validator('not_empty')
         assert not_empty in schema['x_axis'], '"x_axis" should be required'
 
-    @mock.patch('ckan.plugins.toolkit.get_action')
-    def test_setup_template_variables_define_correct_chart_type(self, _):
-        template_variables = self._setup_template_variables()
-        assert 'chart_type' in template_variables
-        assert template_variables['chart_type'] == 'line'
+    def test_chart_type(self):
+        assert self.plugin.CHART_TYPE == 'lines', '"CHART_TYPE" should be "lines"'
 
+
+class TestBarChart(TestLineChart):
+
+    @classmethod
+    def setup_class(cls):
+        p.load('barchart')
+        cls.plugin = p.get_plugin('barchart')
+
+    @classmethod
+    def teardown_class(cls):
+        p.unload('barchart')
+
+    def test_chart_type(self):
+        assert self.plugin.CHART_TYPE == 'bars', '"CHART_TYPE" should be "bars"'

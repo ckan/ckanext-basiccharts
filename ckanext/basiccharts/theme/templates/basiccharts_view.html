@@ -4,10 +4,12 @@
 <script>
   window.onload = function() {
     var endpoint = "http://localhost:5000/api",
+        chartType = "{{ chart_type }}",
         resourceView = {{ h.dump_json(resource_view) | safe }},
         params = overridenDefaultParamsUsingQueryString(resourceView),
         resource = {{ h.dump_json(resource) | safe }};
     resource.endpoint = endpoint;
+    params.chart_type = chartType;
 
     // FIXME: We'll have problems with multiple elements on the same page.
     // Right now, they'll have the same ID.

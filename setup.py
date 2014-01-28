@@ -27,5 +27,6 @@ setup(
     [ckan.plugins]
 	basiccharts=ckanext.basiccharts.plugin:BasicCharts
 	linechart=ckanext.basiccharts.plugin:LineChart
+	barchart=ckanext.basiccharts.plugin:BarChart
 	""",
 )
