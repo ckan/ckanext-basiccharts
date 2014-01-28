@@ -173,3 +173,18 @@ class TestBarChart(TestLineChart):
 
     def test_chart_type(self):
         assert self.plugin.CHART_TYPE == 'bars', '"CHART_TYPE" should be "bars"'
+
+
+class TestPieChart(TestBaseChart):
+
+    @classmethod
+    def setup_class(cls):
+        p.load('piechart')
+        cls.plugin = p.get_plugin('piechart')
+
+    @classmethod
+    def teardown_class(cls):
+        p.unload('piechart')
+
+    def test_chart_type(self):
+        assert self.plugin.CHART_TYPE == 'pie', '"CHART_TYPE" should be "pie"'

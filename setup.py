@@ -27,5 +27,6 @@ setup(
     [ckan.plugins]
 	linechart=ckanext.basiccharts.plugin:LineChart
 	barchart=ckanext.basiccharts.plugin:BarChart
+	piechart=ckanext.basiccharts.plugin:PieChart
 	""",
 )

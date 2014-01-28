@@ -76,6 +76,18 @@ class BarChart(LineChart):
         return info
 
 
+class PieChart(BaseChart):
+
+    CHART_TYPE = 'pie'
+
+    def info(self):
+        info = super(PieChart, self).info()
+        info['name'] = 'piechart'
+        info['title'] = 'Pie Chart'
+
+        return info
+
+
 def _get_fields_without_id(resource):
     fields = _get_fields(resource)
     return [{'value': v['id']} for v in fields if v['id'] != '_id']

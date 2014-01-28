@@ -31,7 +31,7 @@ this.ckan.views.basiccharts = this.ckan.views.basiccharts || {};
     ).done(function(fetch, query) {
       var fields = groupByFieldType(fetch.fields),
           config = plotConfig(fields),
-          data = prepareDataForPlot(fields, query.hits, config.xaxis.mode);
+          data = prepareDataForPlot(fields, query.hits, config.xaxis);
       $.plot(elementId, data, config);
     });
   }
@@ -56,8 +56,9 @@ this.ckan.views.basiccharts = this.ckan.views.basiccharts || {};
     return result;
   }
 
-  function prepareDataForPlot(fields, records, xAxisMode) {
+  function prepareDataForPlot(fields, records, xAxis) {
     var grouppedData = convertAndGroupDataBySeries(fields, records),
+        xAxisMode = xAxis && xAxis.mode,
         barWidth = (xAxisMode === "time") ? 60*60*24*30*1000 : 0.5,
         chartTypes = {
           lines: { show: true },
@@ -71,7 +72,7 @@ this.ckan.views.basiccharts = this.ckan.views.basiccharts || {};
     return $.map(grouppedData, function(data, label) {
       var dataForPlot = {
         label: label,
-        data: data,
+        data: data
       }
       dataForPlot[params.chart_type] = chartTypes[params.chart_type];
 
@@ -91,29 +92,56 @@ this.ckan.views.basiccharts = this.ckan.views.basiccharts || {};
         };
 
     config = {
-      xaxis: axisConfigByType[xAxisType],
       yaxis: axisConfigByType[yAxisType],
-      grid: {
-        hoverable: true
-      },
-      tooltip: true,
-      tooltipOpts: {
-        content: "%s | "+params.x_axis+": %x | "+params.y_axis+": %y"
-      }
+    }
+
+    if (params.chart_type == "pie") {
+      config = $.extend(config, {
+        series: {
+          pie: {
+            show: true
+          }
+        },
+        legend: {
+          show: false
+        }
+      });
+    } else {
+      config = $.extend(config, {
+        grid: {
+          hoverable: true
+        },
+        tooltip: true,
+        tooltipOpts: {
+          content: "%s | "+params.x_axis+": %x | "+params.y_axis+": %y"
+        }
+      });
+    }
+
+    if (xAxisType) {
+      config.xaxis = axisConfigByType[xAxisType];
     }
 
     return config;
   }
 
   function convertAndGroupDataBySeries(fields, records) {
-    var result = {};
+    var result = {},
+        xAxisParser = parsers[fields[params.x_axis]],
+        yAxisParser = parsers[fields[params.y_axis]];
     $.each(records, function(i, record) {
-      var x = parsers[fields[params.x_axis]](record[params.x_axis]),
-          y = parsers[fields[params.y_axis]](record[params.y_axis]),
+      var y = yAxisParser(record[params.y_axis]),
           series = record[params.series];
 
-      result[series] = result[series] || []
-      result[series].push([x, y])
+      if (params.x_axis) {
+        var x = xAxisParser(record[params.x_axis]);
+
+        result[series] = result[series] || [];
+        result[series].push([x, y]);
+      } else {
+        result[series] = result[series] || 0;
+        result[series] = result[series] + y;
+      }
     });
     return result;
   }
