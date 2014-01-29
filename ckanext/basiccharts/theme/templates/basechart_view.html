@@ -13,15 +13,27 @@
     params.filters = setupFilters(params);
 
     function sortData(data) {
-      var seriesOrder = params.filters[params.series];
+      var result = data,
+          seriesOrder = params.filters[params.series],
+          xAxisOrder = params.filters[params.x_axis];
 
+      // Order legends
       if (seriesOrder) {
-        return data.sort(function (a, b) {
+        result.sort(function (a, b) {
           return seriesOrder.indexOf(a.label) - seriesOrder.indexOf(b.label);
         });
-      } else {
-        return data;
       }
+
+      // Order x axis, if it exists
+      if (params.x_axis && axisOrder) {
+        $.each(result, function (i, element) {
+          element.data.sort(function (a, b) {
+            return axisOrder.indexOf(a[0]) - axisOrder.indexOf(b[0]);
+          });
+        });
+      }
+
+      return result;
     }
 
     // FIXME: We'll have problems with multiple elements on the same page.
@@ -32,7 +44,7 @@
 // TODO: Remove this when we finish doing the form for multiple filters
 function setupFilters(params) {
   var filters = {
-    region: ["Pakistan", "Punjaab", "Bagh"]
+    region: ["Bagh", "Punjaab", "Pakistan"]
   };
 
   if (params.filter_field && params.filter_value) {
