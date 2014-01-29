@@ -6,11 +6,9 @@
     var endpoint = "http://localhost:5000/api",
         chartType = "{{ chart_type }}",
         resourceView = {{ h.dump_json(resource_view) | safe }},
-        params = overridenDefaultParamsUsingQueryString(resourceView),
+        params = setupParams(resourceView, chartType),
         resource = {{ h.dump_json(resource) | safe }};
     resource.endpoint = endpoint;
-    params.chart_type = chartType;
-    params.filters = setupFilters(params);
 
     function sortData(data) {
       var result = data,
@@ -41,8 +39,24 @@
     ckan.views.basiccharts.init("#graph", resource, params, sortData);
   }
 
-// TODO: Remove this when we finish doing the form for multiple filters
-function setupFilters(params) {
+function setupParams(defaultParams, chartType) {
+  var routeParams = window.location.search.queryStringToJSON(),
+      params = {
+        chart_type: chartType,
+        filters: setupFilters(defaultParams, routeParams)
+      }
+
+  return $.extend(params, defaultParams, routeParams);;
+}
+
+function setupFilters(defaultParams, routeParams) {
+  var defaultFilters = parseFilters(defaultParams),
+      routeFilters = parseFilters(routeParams);
+
+  return $.extend({}, defaultFilters, routeFilters);
+}
+
+function parseFilters(params) {
   var filters = {};
 
   $.each(params.filter_values, function (i, value) {
@@ -55,13 +69,6 @@ function setupFilters(params) {
   });
 
   return filters;
-}
-
-function overridenDefaultParamsUsingQueryString(defaultParams) {
-  var routeParams = window.location.search.queryStringToJSON(),
-      params = $.extend({}, defaultParams, routeParams);
-
-  return params;
 }
 </script>
 {% endblock %}
