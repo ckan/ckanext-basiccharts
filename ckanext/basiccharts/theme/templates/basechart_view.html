@@ -25,10 +25,10 @@
       }
 
       // Order x axis, if it exists
-      if (params.x_axis && axisOrder) {
+      if (params.x_axis && xAxisOrder) {
         $.each(result, function (i, element) {
           element.data.sort(function (a, b) {
-            return axisOrder.indexOf(a[0]) - axisOrder.indexOf(b[0]);
+            return xAxisOrder.indexOf(a[0]) - xAxisOrder.indexOf(b[0]);
           });
         });
       }
