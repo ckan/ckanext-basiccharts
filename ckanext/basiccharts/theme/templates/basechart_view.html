@@ -46,12 +46,12 @@ function setupParams(defaultParams, chartType) {
         filters: setupFilters(defaultParams, routeParams)
       }
 
-  return $.extend(params, defaultParams, routeParams);;
+  return $.extend({}, defaultParams, routeParams, params);
 }
 
 function setupFilters(defaultParams, routeParams) {
   var defaultFilters = parseFilters(defaultParams),
-      routeFilters = parseFilters(routeParams);
+      routeFilters = parseRouteFilters(routeParams);
 
   return $.extend({}, defaultFilters, routeFilters);
 }
@@ -64,6 +64,23 @@ function parseFilters(params) {
     if (value === "") {
       return;
     }
+    filters[field] = filters[field] || [];
+    filters[field].push(value);
+  });
+
+  return filters;
+}
+
+function parseRouteFilters(routeParams) {
+  // The filters are in format "field:value|field:value|field:value"
+  var filters = {},
+      fieldValuesStr = routeParams.filters.split("|");
+
+  $.each(fieldValuesStr, function (i, fieldValueStr) {
+    var fieldValue = fieldValueStr.split(":"),
+        field = fieldValue[0],
+        value = fieldValue[1];
+
     filters[field] = filters[field] || [];
     filters[field].push(value);
   });
