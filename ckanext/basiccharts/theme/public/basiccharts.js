@@ -51,6 +51,7 @@ this.ckan.views.basiccharts = this.ckan.views.basiccharts || {};
       })
       if (filtersSQL.length > 0) {
         sql += " WHERE " + filtersSQL.join(" AND ");
+        sql += " ORDER BY " + Object.keys(filters).sort().join(" ASC, ") + " ASC";
       }
     }
 
