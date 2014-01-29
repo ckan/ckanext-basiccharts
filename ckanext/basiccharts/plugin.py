@@ -18,8 +18,8 @@ class BaseChart(p.SingletonPlugin):
 
     def info(self):
         schema = {
-            'filter_field': [],
-            'filter_value': [],
+            'filter_fields': [],
+            'filter_values': [],
             'series': [not_empty],
             'y_axis': [not_empty]
         }

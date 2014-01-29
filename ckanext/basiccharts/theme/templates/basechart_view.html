@@ -43,14 +43,16 @@
 
 // TODO: Remove this when we finish doing the form for multiple filters
 function setupFilters(params) {
-  var filters = {
-    region: ["Bagh", "Punjaab", "Pakistan"]
-  };
+  var filters = {};
 
-  if (params.filter_field && params.filter_value) {
-    filters[params.filter_field] = filters[params.filter_field] || [];
-    filters[params.filter_field].unshift(params.filter_value);
-  }
+  $.each(params.filter_values, function (i, value) {
+    var field = params.filter_fields[i];
+    if (value === "") {
+      return;
+    }
+    filters[field] = filters[field] || [];
+    filters[field].push(value);
+  });
 
   return filters;
 }

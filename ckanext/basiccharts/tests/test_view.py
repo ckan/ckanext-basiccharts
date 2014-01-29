@@ -40,21 +40,21 @@ class TestBaseChart(object):
         schema = self.plugin.info()['schema']
         assert schema is not None, 'Plugin should define schema'
 
-    def test_schema_has_filter_field(self):
+    def test_schema_has_filter_fields(self):
         schema = self.plugin.info()['schema']
-        assert schema.get('filter_field') is not None, 'Schema should define "filter_field"'
+        assert schema.get('filter_fields') is not None, 'Schema should define "filter_field"'
 
-    def test_schema_filter_field_doesnt_validate(self):
+    def test_schema_filter_fields_doesnt_validate(self):
         schema = self.plugin.info()['schema']
-        assert len(schema['filter_field']) == 0, 'Schema shouldn\'t have validators'
+        assert len(schema['filter_fields']) == 0, 'Schema shouldn\'t have validators'
 
-    def test_schema_has_filter_value(self):
+    def test_schema_has_filter_values(self):
         schema = self.plugin.info()['schema']
-        assert schema.get('filter_value') is not None, 'Schema should define "filter_value"'
+        assert schema.get('filter_values') is not None, 'Schema should define "filter_value"'
 
-    def test_schema_filter_value_doesnt_validate(self):
+    def test_schema_filter_values_doesnt_validate(self):
         schema = self.plugin.info()['schema']
-        assert len(schema['filter_value']) == 0, 'Schema shouldn\'t have validators'
+        assert len(schema['filter_values']) == 0, 'Schema shouldn\'t have validators'
 
     def test_schema_has_y_axis(self):
         schema = self.plugin.info()['schema']
