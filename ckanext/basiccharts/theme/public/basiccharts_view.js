@@ -58,7 +58,7 @@ ckan.module("basiccharts_view", function (jQuery) {
   }
 
   function initialize() {
-    var endpoint = this.options.endpoint,
+    var endpoint = this.options.endpoint || window.location.origin + "/api",
         chartType = this.options.chartType,
         resourceView = this.options.resourceView,
         params = setupParams(resourceView, chartType),
