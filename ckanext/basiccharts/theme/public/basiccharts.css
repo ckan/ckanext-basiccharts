@@ -1,4 +1,8 @@
-.pieLabel div {
+.basicChart {
+  height: 500px;
+}
+
+.basicChart .pieLabel div {
   font-size: inherit !important;
   color: inherit !important;
 }

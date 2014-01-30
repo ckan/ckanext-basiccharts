@@ -59,6 +59,10 @@ function setupFilters(defaultParams, routeParams) {
 function parseFilters(params) {
   var filters = {};
 
+  if (!params.filter_values) {
+    return filters;
+  }
+
   $.each(params.filter_values, function (i, value) {
     var field = params.filter_fields[i];
     if (value === "") {
@@ -73,6 +77,9 @@ function parseFilters(params) {
 
 function parseRouteFilters(routeParams) {
   // The filters are in format "field:value|field:value|field:value"
+  if (!routeParams || !routeParams.filters) {
+    return {};
+  }
   var filters = {},
       fieldValuesStr = routeParams.filters.split("|");
 
@@ -90,4 +97,4 @@ function parseRouteFilters(routeParams) {
 </script>
 {% endblock %}
 
-<div style="height: 500px;" id="graph"></div>
+<div class="basicChart" id="graph"></div>

@@ -1,6 +1,14 @@
+import ckan.lib.helpers as h
 import ckan.plugins as p
 
 not_empty = p.toolkit.get_validator('not_empty')
+
+
+class BasicCharts(p.SingletonPlugin):
+    p.implements(p.ITemplateHelpers)
+
+    def get_helpers(self):
+        return {'convert_string_to_js': _convert_string_to_js}
 
 
 class BaseChart(p.SingletonPlugin):
@@ -36,8 +44,8 @@ class BaseChart(p.SingletonPlugin):
         resource_view = data_dict['resource_view']
         fields = _get_fields_without_id(resource)
 
-        return {'resource': data_dict['resource'],
-                'resource_view': data_dict['resource_view'],
+        return {'resource': resource,
+                'resource_view': resource_view,
                 'fields': fields,
                 'chart_type': self.CHART_TYPE}
 
@@ -92,10 +100,17 @@ def _get_fields_without_id(resource):
     fields = _get_fields(resource)
     return [{'value': v['id']} for v in fields if v['id'] != '_id']
 
+
 def _get_fields(resource):
     data = {
-      'resource_id': resource['id'],
-      'limit': 0
+        'resource_id': resource['id'],
+        'limit': 0
     }
     result = p.toolkit.get_action('datastore_search')({}, data)
     return result['fields']
+
+
+def _convert_string_to_js(string):
+    '''Convert a string to be usable in JavaScript'''
+    string_without_newlines = str(string).replace('\n', '')
+    return '\"%s\"' % h.escape_js(string_without_newlines)

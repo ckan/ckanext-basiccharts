@@ -9,6 +9,66 @@ import ckan.plugins as p
 import ckanext.basiccharts
 
 
+class TestBasicCharts(object):
+    @classmethod
+    def setup_class(cls):
+        p.load('basiccharts')
+        cls.plugin = p.get_plugin('basiccharts')
+
+    @classmethod
+    def teardown_class(cls):
+        p.unload('basiccharts')
+
+    def test_get_helpers_should_define_convert_string_to_js(self):
+        helpers = self.plugin.get_helpers()
+        assert helpers.get('convert_string_to_js') is not None,\
+            'Plugin should define "convert_string_to_js" helper'
+
+    def test_convert_string_to_js_removes_newlines(self):
+        helpers = self.plugin.get_helpers()
+        convert_string_to_js = helpers['convert_string_to_js']
+
+        test_string = 'foo\nbar\nbaz'
+        result = convert_string_to_js(test_string)
+
+        assert result.find('\n') == -1,\
+            '"convert_string_to_js" should remove newlines'
+
+    def test_convert_string_to_js_surrounds_in_doublequotes(self):
+        helpers = self.plugin.get_helpers()
+        convert_string_to_js = helpers['convert_string_to_js']
+
+        test_string = 'foo'
+        result = convert_string_to_js(test_string)
+
+        assert result == '"foo"',\
+            '"convert_string_to_js" surrounds in doublequotes'
+
+    def test_convert_string_to_js_casts_into_str(self):
+        helpers = self.plugin.get_helpers()
+        convert_string_to_js = helpers['convert_string_to_js']
+
+        class StringLike(str):
+            pass
+
+        test_string = StringLike('foo')
+        result = convert_string_to_js(test_string)
+
+        strType = ''.__class__
+        assert result.__class__ == strType,\
+            '"convert_string_to_js" casts into str()'
+
+    @mock.patch('ckan.lib.helpers.escape_js')
+    def test_convert_string_to_js_escapes_string(self, escape_js):
+        helpers = self.plugin.get_helpers()
+        convert_string_to_js = helpers['convert_string_to_js']
+
+        test_string = 'foo'
+        result = convert_string_to_js(test_string)
+
+        escape_js.assert_called_with(test_string)
+
+
 class TestBaseChart(object):
 
     @classmethod

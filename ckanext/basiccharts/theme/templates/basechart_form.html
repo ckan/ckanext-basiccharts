@@ -1,15 +1,42 @@
 {% import 'macros/form.html' as form %}
+{% resource 'basiccharts/form' %}
 
-{% for i in [0, 1, 2] %}
+{% macro filtersInputs(name, selectName, inputName, label='', options='', error='', filters={}, classes=[], attrs={}, is_required=false) %}
+  {% set classes = (classes|list) %}
+  {% do classes.append('control-select') %}
+
+  {%- set extra_html = caller() if caller -%}
+  {% call form.input_block(id or name, label or name, error, classes, extra_html=extra_html, is_required=is_required) %}
+    <div class="formFilters">
+    {% for value in filters['values'] %}
+      {% set field = filters['fields'][loop.index0] %}
+      {{ selectAndInput(selectName, inputName, selectOptions=options, selected=field, inputValue=value, attrs=attrs) }}
+    {% endfor %}
+    </div>
+    <a href="#" class="formFilters-addFilter">Add</a>
+  {% endcall %}
+{% endmacro %}
+
+{% macro selectAndInput(selectName, inputName, selectOptions='', selected='', inputValue='', attrs={}) %}
+  <div>
+  <select id="{{ selectName }}" name="{{ selectName }}" {{ form.attributes(attrs) }}>
+    {% for option in selectOptions %}
+      <option value="{{ option.value }}"{% if option.value == selected %} selected{% endif %}>{{ option.text or option.value }}</option>
+    {% endfor %}
+  </select>
+  <input type="text" name="{{ inputName }}" value="{{ inputValue }}" />
+  <a href="#" class="formFilters-removeFilter">Remove</a>
+  </div>
+{% endmacro %}
+
+
+
+{% set filters = { 'fields': resource_view['filter_fields'], 'values': resource_view['filter_values'] } %}
+
 {{
-    form.select('filter_fields', label=_('Filter'), options=fields,
-        selected=resource_view['filter_fields'][i])
+    filtersInputs('filters', 'filter_fields', 'filter_values',
+        label=_('Filters'), options=fields, filters=filters, classes=["control-filters"])
 }}
-{{
-    form.input('filter_values', label=_('Filter Value'),
-        value=resource_view['filter_values'][i])
-}}
-{% endfor %}
 
 {{
     form.select('series', label=_('Series'), options=fields,
@@ -21,4 +48,13 @@
         selected=resource_view['y_axis'], is_required=true)
 }}
 
-{% block form %}{% endblock %}
+{% block scripts %}
+<script>
+  {% set templateFilterInputs = selectAndInput('filter_fields', 'filter_values', selectOptions=fields) %}
+
+  var templateFilterInputs = {{ h.convert_string_to_js(templateFilterInputs) | safe }};
+</script>
+{% endblock %}
+
+{% block form %}
+{% endblock %}
