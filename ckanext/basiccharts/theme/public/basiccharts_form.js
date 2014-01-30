@@ -2,15 +2,18 @@ ckan.module("basiccharts_filters_form", function (jQuery) {
   "use strict";
 
   function initialize() {
-    var templateFilterInputs = this.options.templateFilterInputs;
-    console.log(this.options);
+    var self = this,
+        templateFilterInputs = self.options.templateFilterInputs,
+        filtersDiv = self.el.find(self.options.filtersSelector),
+        addFilterEl = self.el.find(self.options.addFilterSelector),
+        removeFilterSelector = self.options.removeFilterSelector;
 
-    $('.formFilters-addFilter').click(function (evt) {
+    addFilterEl.click(function (evt) {
       evt.preventDefault();
-      $(".formFilters").append($(templateFilterInputs));
+      filtersDiv.append(templateFilterInputs);
     });
 
-    $(document).on('click', '.formFilters-removeFilter', function (evt) {
+    filtersDiv.on("click", removeFilterSelector, function (evt) {
       evt.preventDefault();
       $(this).parent().remove();
     });
