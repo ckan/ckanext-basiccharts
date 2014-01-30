@@ -65,7 +65,7 @@ ckan.module("basiccharts_view", function (jQuery) {
         elementId = "#"+this.el.context.id,
         resource = {
           id: this.options.resourceId,
-          endpoint: this.options.endpoint
+          endpoint: endpoint
         };
 
     function sortData(data) {
