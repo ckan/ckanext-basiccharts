@@ -1,4 +1,3 @@
-import ckan.lib.helpers as h
 import ckan.plugins as p
 
 not_empty = p.toolkit.get_validator('not_empty')
@@ -8,7 +7,7 @@ class BasicCharts(p.SingletonPlugin):
     p.implements(p.ITemplateHelpers)
 
     def get_helpers(self):
-        return {'convert_string_to_js': _convert_string_to_js}
+        return {'remove_linebreaks': _remove_linebreaks}
 
 
 class BaseChart(p.SingletonPlugin):
@@ -110,7 +109,7 @@ def _get_fields(resource):
     return result['fields']
 
 
-def _convert_string_to_js(string):
+def _remove_linebreaks(string):
     '''Convert a string to be usable in JavaScript'''
-    string_without_newlines = str(string).replace('\n', '')
-    return '\"%s\"' % h.escape_js(string_without_newlines)
+    print string
+    return str(string).replace('\n', '')

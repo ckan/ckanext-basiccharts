@@ -29,9 +29,14 @@
   </div>
 {% endmacro %}
 
-
-
+{% set templateFilterInputs = selectAndInput('filter_fields', 'filter_values', selectOptions=fields) %}
 {% set filters = { 'fields': resource_view['filter_fields'], 'values': resource_view['filter_values'] } %}
+
+<div
+  data-module = "basiccharts_filters_form"
+  data-module-template-filter-inputs = "{{ h.remove_linebreaks(templateFilterInputs) }}"
+  >
+</div>
 
 {{
     filtersInputs('filters', 'filter_fields', 'filter_values',
@@ -47,14 +52,6 @@
     form.select('y_axis', label=_('Y Axis'), options=fields,
         selected=resource_view['y_axis'], is_required=true)
 }}
-
-{% block scripts %}
-<script>
-  {% set templateFilterInputs = selectAndInput('filter_fields', 'filter_values', selectOptions=fields) %}
-
-  var templateFilterInputs = {{ h.convert_string_to_js(templateFilterInputs) | safe }};
-</script>
-{% endblock %}
 
 {% block form %}
 {% endblock %}
