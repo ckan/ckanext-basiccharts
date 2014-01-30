@@ -13,7 +13,7 @@
       {{ selectAndInput(selectName, inputName, selectOptions=options, selected=field, inputValue=value, attrs=attrs) }}
     {% endfor %}
     </div>
-    <a href="#" class="formFilters-addFilter">Add</a>
+    <a href="#" class="formFilters-addFilter">{{ _('Add Filter') }}</a>
   {% endcall %}
 {% endmacro %}
 
@@ -25,7 +25,7 @@
     {% endfor %}
   </select>
   <input type="text" name="{{ inputName }}" value="{{ inputValue }}" />
-  <a href="#" class="formFilters-removeFilter">Remove</a>
+  <span title="{{ _('Remove Filter') }}" class="formFilters-removeFilter icon icon-remove"></span>
   </div>
 {% endmacro %}
 
