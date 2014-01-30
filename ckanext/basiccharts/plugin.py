@@ -1,6 +1,7 @@
 import ckan.plugins as p
 
 not_empty = p.toolkit.get_validator('not_empty')
+aslist = p.toolkit.aslist
 
 
 class BasicCharts(p.SingletonPlugin):
@@ -41,6 +42,8 @@ class BaseChart(p.SingletonPlugin):
     def setup_template_variables(self, context, data_dict):
         resource = data_dict['resource']
         resource_view = data_dict['resource_view']
+        resource_view = self._filter_fields_and_values_as_list(resource_view)
+
         fields = _get_fields_without_id(resource)
 
         return {'resource': resource,
@@ -53,6 +56,16 @@ class BaseChart(p.SingletonPlugin):
 
     def form_template(self, context, data_dict):
         return 'basechart_form.html'
+
+    def _filter_fields_and_values_as_list(self, resource_view):
+        if 'filter_fields' in resource_view:
+            filter_fields = aslist(resource_view['filter_fields'])
+            resource_view['filter_fields'] = filter_fields
+        if 'filter_values' in resource_view:
+            filter_values = aslist(resource_view['filter_values'])
+            resource_view['filter_values'] = filter_values
+
+        return resource_view
 
 
 class LineChart(BaseChart):
