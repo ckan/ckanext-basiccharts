@@ -102,10 +102,7 @@ this.ckan.views.basiccharts = this.ckan.views.basiccharts || {};
         };
 
     config = {
-      yaxis: axisConfigByType[yAxisType],
-      legend: {
-        show: params.show_legends
-      }
+      yaxis: axisConfigByType[yAxisType]
     }
 
     if (params.chart_type == "pie") {
@@ -123,6 +120,9 @@ this.ckan.views.basiccharts = this.ckan.views.basiccharts || {};
       config = $.extend(config, {
         grid: {
           hoverable: true
+        },
+        legend: {
+          show: params.show_legends
         },
         tooltip: true,
         tooltipOpts: {
