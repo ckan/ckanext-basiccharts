@@ -1,6 +1,7 @@
 import ckan.plugins as p
 
 not_empty = p.toolkit.get_validator('not_empty')
+ignore_missing = p.toolkit.get_validator('ignore_missing')
 aslist = p.toolkit.aslist
 
 
@@ -26,11 +27,11 @@ class BaseChart(p.SingletonPlugin):
 
     def info(self):
         schema = {
-            'filter_fields': [],
-            'filter_values': [],
+            'filter_fields': [ignore_missing],
+            'filter_values': [ignore_missing],
             'series': [not_empty],
             'y_axis': [not_empty],
-            'show_legends': []
+            'show_legends': [ignore_missing]
         }
 
         return {'icon': 'bar-chart',

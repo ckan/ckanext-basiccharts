@@ -82,19 +82,21 @@ class TestBaseChart(object):
 
     def test_schema_has_filter_fields(self):
         schema = self.plugin.info()['schema']
-        assert schema.get('filter_fields') is not None, 'Schema should define "filter_field"'
+        assert schema.get('filter_fields') is not None, 'Schema should define "filter_fields"'
 
-    def test_schema_filter_fields_doesnt_validate(self):
+    def test_schema_filter_fields_ignores_empty(self):
         schema = self.plugin.info()['schema']
-        assert len(schema['filter_fields']) == 0, 'Schema shouldn\'t have validators'
+        ignore_missing = p.toolkit.get_validator('ignore_missing')
+        assert ignore_missing in schema['filter_fields'], '"filter_values" should ignore missing'
 
     def test_schema_has_filter_values(self):
         schema = self.plugin.info()['schema']
-        assert schema.get('filter_values') is not None, 'Schema should define "filter_value"'
+        assert schema.get('filter_values') is not None, 'Schema should define "filter_values"'
 
     def test_schema_filter_values_doesnt_validate(self):
         schema = self.plugin.info()['schema']
-        assert len(schema['filter_values']) == 0, 'Schema shouldn\'t have validators'
+        ignore_missing = p.toolkit.get_validator('ignore_missing')
+        assert ignore_missing in schema['filter_values'], '"filter_values" should ignore missing'
 
     def test_schema_has_y_axis(self):
         schema = self.plugin.info()['schema']
@@ -120,7 +122,8 @@ class TestBaseChart(object):
 
     def test_schema_show_legends_doesnt_validate(self):
         schema = self.plugin.info()['schema']
-        assert len(schema['show_legends']) == 0, '"show_legends" schema shouldn\'t have validators'
+        ignore_missing = p.toolkit.get_validator('ignore_missing')
+        assert ignore_missing in schema['show_legends'], '"show_legends" should ignore missing'
 
     def test_plugin_isnt_iframed(self):
         iframed = self.plugin.info().get('iframed', True)
