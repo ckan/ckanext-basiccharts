@@ -114,6 +114,14 @@ class TestBaseChart(object):
         not_empty = p.toolkit.get_validator('not_empty')
         assert not_empty in schema['series'], '"series" should be required'
 
+    def test_schema_has_show_legends(self):
+        schema = self.plugin.info()['schema']
+        assert schema.get('show_legends') is not None, 'Schema should define "show_legends"'
+
+    def test_schema_show_legends_doesnt_validate(self):
+        schema = self.plugin.info()['schema']
+        assert len(schema['show_legends']) == 0, '"show_legends" schema shouldn\'t have validators'
+
     def test_plugin_isnt_iframed(self):
         iframed = self.plugin.info().get('iframed', True)
         assert not iframed, 'Plugin should not be iframed'
@@ -194,6 +202,13 @@ class TestBaseChart(object):
 
         filter_values = template_variables['resource_view']['filter_values']
         assert filter_values == ['value1', 'value2'], filter_values
+
+    @mock.patch('ckan.plugins.toolkit.get_action')
+    def test_setup_template_variables_adds_show_legends_as_false_if_it_was_undefined(self, _):
+        template_variables = self._setup_template_variables(resource_view={})
+
+        show_legends = template_variables['resource_view']['show_legends']
+        assert show_legends is False, show_legends
 
     @mock.patch('ckan.plugins.toolkit.get_action')
     def test_setup_template_variables_adds_fields_without_the_id(self, get_action):

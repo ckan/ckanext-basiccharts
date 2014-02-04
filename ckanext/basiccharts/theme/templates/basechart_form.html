@@ -32,6 +32,11 @@
 {% set templateFilterInputs = selectAndInput('filter_fields', 'filter_values', selectOptions=fields) %}
 {% set filters = { 'fields': resource_view['filter_fields'], 'values': resource_view['filter_values'] } %}
 
+{{
+    form.checkbox('show_legends', label=_('Show legends'),
+    value=True, checked=resource_view['show_legends'])
+}}
+
 <div
   data-module = "basiccharts_filters_form"
   data-module-template-filter-inputs = "{{ h.remove_linebreaks(templateFilterInputs) }}"
