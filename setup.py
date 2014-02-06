@@ -13,7 +13,7 @@ setup(
 	keywords='',
 	author='Vitor Baptista',
 	author_email='vitor.baptista@okfn.org',
-	url='https://github.com/okfn/ckanext-basiccharts',
+	url='https://github.com/ckan/ckanext-basiccharts',
 	license='',
 	packages=find_packages(exclude=['ez_setup', 'examples', 'tests']),
 	namespace_packages=['ckanext', 'ckanext.basiccharts'],
