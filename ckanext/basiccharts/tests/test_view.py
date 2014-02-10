@@ -87,7 +87,7 @@ class TestBaseChart(object):
     def test_schema_filter_fields_ignores_empty(self):
         schema = self.plugin.info()['schema']
         ignore_missing = p.toolkit.get_validator('ignore_missing')
-        assert ignore_missing in schema['filter_fields'], '"filter_values" should ignore missing'
+        assert ignore_missing in schema['filter_fields'], '"filter_fields" should ignore missing'
 
     def test_schema_has_filter_values(self):
         schema = self.plugin.info()['schema']
