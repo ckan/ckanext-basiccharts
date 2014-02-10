@@ -5,7 +5,6 @@ this.ckan.views.basiccharts = this.ckan.views.basiccharts || {};
 (function(self, $) {
   "use strict";
 
-  var resource, params;
   var parsers = {
         integer: parseInt,
         numeric: parseFloat,
@@ -18,20 +17,18 @@ this.ckan.views.basiccharts = this.ckan.views.basiccharts || {};
       };
 
   self.init = function init(elementId, _resource, _params, sortData) {
-    resource = _resource;
-    params = _params;
-    initPlot(elementId, sortData);
+    initPlot(elementId, sortData, _resource, _params);
   }
 
-  function initPlot(elementId, sortData) {
-    var sql = generateSqlQuery();
+  function initPlot(elementId, sortData, resource, params) {
+    var sql = generateSqlQuery(resource, params);
     $.when(
       recline.Backend.Ckan.fetch(resource),
       recline.Backend.Ckan.search_sql(sql, resource)
     ).done(function(fetch, query) {
       var fields = groupByFieldType(fetch.fields),
-          config = plotConfig(fields),
-          data = prepareDataForPlot(fields, query.hits, config.xaxis);
+          config = plotConfig(fields, params),
+          data = prepareDataForPlot(fields, query.hits, config.xaxis, params);
 
       if (sortData) {
         data = sortData(data);
@@ -41,7 +38,7 @@ this.ckan.views.basiccharts = this.ckan.views.basiccharts || {};
     });
   }
 
-  function generateSqlQuery() {
+  function generateSqlQuery(resource, params) {
     var sql = "SELECT * FROM \""+resource.id+"\"",
         filters = params.filters;
 
@@ -66,8 +63,8 @@ this.ckan.views.basiccharts = this.ckan.views.basiccharts || {};
     return result;
   }
 
-  function prepareDataForPlot(fields, records, xAxis) {
-    var grouppedData = convertAndGroupDataBySeries(fields, records),
+  function prepareDataForPlot(fields, records, xAxis, params) {
+    var grouppedData = convertAndGroupDataBySeries(fields, records, params),
         xAxisMode = xAxis && xAxis.mode,
         barWidth = (xAxisMode === "time") ? 60*60*24*30*1000 : 0.5,
         chartTypes = {
@@ -90,7 +87,7 @@ this.ckan.views.basiccharts = this.ckan.views.basiccharts || {};
     });
   }
 
-  function plotConfig(fields) {
+  function plotConfig(fields, params) {
     var config,
         xAxisType = fields[params.x_axis],
         yAxisType = fields[params.y_axis],
@@ -126,7 +123,9 @@ this.ckan.views.basiccharts = this.ckan.views.basiccharts || {};
         },
         tooltip: true,
         tooltipOpts: {
-          content: "%s | "+params.x_axis+": %x | "+params.y_axis+": %y"
+          content: "%s | "+params.x_axis+": %x | "+params.y_axis+": %y",
+          xDateFormat: "%d/%m/%Y",
+          yDateFormat: "%d/%m/%Y"
         }
       });
     }
@@ -138,7 +137,7 @@ this.ckan.views.basiccharts = this.ckan.views.basiccharts || {};
     return config;
   }
 
-  function convertAndGroupDataBySeries(fields, records) {
+  function convertAndGroupDataBySeries(fields, records, params) {
     var result = {},
         xAxisParser = parsers[fields[params.x_axis]],
         yAxisParser = parsers[fields[params.y_axis]];
