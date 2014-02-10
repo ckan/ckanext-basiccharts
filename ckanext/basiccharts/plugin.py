@@ -109,6 +109,8 @@ class PieChart(BaseChart):
         info = super(PieChart, self).info()
         info['name'] = 'piechart'
         info['title'] = 'Pie Chart'
+        info['sizex'] = 2
+        info['sizey'] = 2
 
         return info
 
