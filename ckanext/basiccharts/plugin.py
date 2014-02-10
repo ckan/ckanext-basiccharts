@@ -36,6 +36,8 @@ class BaseChart(p.SingletonPlugin):
 
         return {'icon': 'bar-chart',
                 'schema': schema,
+                'sizex': 4,
+                'sizey': 3,
                 'iframed': False}
 
     def can_view(self, data_dict):
