@@ -2,6 +2,10 @@
   height: 500px;
 }
 
+.basicChart .error {
+  display: none;
+}
+
 .dashboard-grid .basicChart {
   height: 90%;
   width: 90%;
