@@ -1,6 +1,10 @@
 .basicChart {
-  height: 335px;
-  width: 560px;
+  height: 500px;
+}
+
+.dashboard-view .basicChart {
+  height: 90%;
+  width: 90%;
 }
 
 .basicChart .pieLabel div {
