@@ -52,8 +52,11 @@ this.ckan.views.basiccharts = this.ckan.views.basiccharts || {};
       });
 
       if (filtersSQL.length > 0) {
-        sql += " WHERE " + filtersSQL.join(" AND ");
-        sql += " ORDER BY " + Object.keys(filters).sort().join(" ASC, ") + " ASC";
+        var fields = Object.keys(filters).sort();
+
+        sql += " WHERE " + filtersSQL.join(" AND ") +
+               " ORDER BY " + fields.join(" ASC, ") + " ASC, \"" +
+               params.y_axis + "\" DESC";
       }
     }
 
