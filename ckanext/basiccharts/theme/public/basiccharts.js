@@ -40,12 +40,17 @@ this.ckan.views.basiccharts = this.ckan.views.basiccharts || {};
 
   function generateSqlQuery(resource, params) {
     var sql = "SELECT * FROM \""+resource.id+"\"",
-        filters = params.filters;
+        filters = {};
 
-    if (filters) {
+    if (params.filters) {
+      $.each(params.filters, function (field, values) {
+        filters['"' + field + '"'] = values;
+      });
+
       var filtersSQL = $.map(filters, function (values, field) {
         return field + " IN ('" + values.join("','") + "')";
-      })
+      });
+
       if (filtersSQL.length > 0) {
         sql += " WHERE " + filtersSQL.join(" AND ");
         sql += " ORDER BY " + Object.keys(filters).sort().join(" ASC, ") + " ASC";
