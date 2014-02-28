@@ -52,13 +52,16 @@ this.ckan.views.basiccharts = this.ckan.views.basiccharts || {};
       });
 
       if (filtersSQL.length > 0) {
-        var fields = Object.keys(filters).sort();
-
-        sql += " WHERE " + filtersSQL.join(" AND ") +
-               " ORDER BY " + fields.join(" ASC, ") + " ASC, \"" +
-               params.y_axis + "\" DESC";
+        sql += " WHERE " + filtersSQL.join(" AND ");
       }
     }
+
+    var orderBy = Object.keys(filters).sort().map(function (filter) {
+      return filter + " ASC";
+    });
+    orderBy.push("\"" + params.y_axis + "\" DESC");
+
+    sql += " ORDER BY " + orderBy.join(",");
 
     return sql;
   }
