@@ -7,8 +7,12 @@
 }
 
 .dashboard-grid .basicChart {
-  height: 100%;
+  height: 99%;
   width: 100%;
+}
+
+.dashboard-grid .basicChart.pie {
+  width: 90%;
 }
 
 .basicChart .pieLabel div {
