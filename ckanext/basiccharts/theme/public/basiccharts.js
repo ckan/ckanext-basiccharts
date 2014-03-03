@@ -18,7 +18,7 @@ this.ckan.views.basiccharts = this.ckan.views.basiccharts || {};
 
   self.init = function init(elementId, _resource, _params, sortData) {
     initPlot(elementId, sortData, _resource, _params);
-  }
+  };
 
   function initPlot(elementId, sortData, resource, params) {
     var sql = generateSqlQuery(resource, params);
@@ -91,7 +91,7 @@ this.ckan.views.basiccharts = this.ckan.views.basiccharts || {};
       var dataForPlot = {
         label: label,
         data: data
-      }
+      };
       dataForPlot[params.chart_type] = chartTypes[params.chart_type];
 
       return dataForPlot;
@@ -111,7 +111,7 @@ this.ckan.views.basiccharts = this.ckan.views.basiccharts || {};
 
     config = {
       yaxis: axisConfigByType[yAxisType]
-    }
+    };
 
     if (params.chart_type == "pie") {
       config = $.extend(config, {

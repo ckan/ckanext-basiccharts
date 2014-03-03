@@ -6,7 +6,7 @@ ckan.module("basiccharts_view", function (jQuery) {
         params = {
           chart_type: chartType,
           filters: setupFilters(defaultParams, routeParams)
-        }
+        };
 
     return $.extend({}, defaultParams, routeParams, params);
   }
@@ -97,5 +97,5 @@ ckan.module("basiccharts_view", function (jQuery) {
 
   return {
     initialize: initialize
-  }
+  };
 });
