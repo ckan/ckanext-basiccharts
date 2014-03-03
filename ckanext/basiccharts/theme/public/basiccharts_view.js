@@ -80,8 +80,14 @@ ckan.module("basiccharts_view", function (jQuery) {
         });
       }
 
-      // Order x axis, if it exists
-      if (params.x_axis && xAxisOrder) {
+      // Order x axis
+      if (params.x_axis) {
+        if (xAxisOrder === undefined) {
+          xAxisOrder = $.map(result[0].data, function (d) {
+            return d[0];
+          });
+        }
+
         $.each(result, function (i, element) {
           element.data.sort(function (a, b) {
             return xAxisOrder.indexOf(a[0]) - xAxisOrder.indexOf(b[0]);
