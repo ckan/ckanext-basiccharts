@@ -59,7 +59,11 @@ this.ckan.views.basiccharts = this.ckan.views.basiccharts || {};
     var orderBy = Object.keys(filters).sort().map(function (filter) {
       return filter + " ASC";
     });
-    orderBy.push("\"" + params.y_axis + "\" DESC");
+    if (params.horizontal) {
+      orderBy.push("\"" + params.x_axis + "\" ASC");
+    } else {
+      orderBy.push("\"" + params.y_axis + "\" DESC");
+    }
 
     sql += " ORDER BY " + orderBy.join(",");
 
