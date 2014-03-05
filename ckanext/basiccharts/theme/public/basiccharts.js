@@ -104,7 +104,12 @@ this.ckan.views.basiccharts = this.ckan.views.basiccharts || {};
         yAxisType = fields[params.y_axis],
         axisConfigByType = {
           timestamp: { mode: "time" },
-          text: { mode: "categories" },
+          text: {
+            mode: "categories",
+            tickFormatter: function (value, axis) {
+              return value;
+            }
+          },
           numeric: {},
           integer: {}
         };
