@@ -281,6 +281,29 @@ class TestBarChart(TestLineChart):
     def teardown_class(cls):
         p.unload('barchart')
 
+    def test_schema_has_horizontal(self):
+        schema = self.plugin.info()['schema']
+        assert schema.get('horizontal') is not None, 'Schema should define "horizontal"'
+
+    def test_schema_horizontal_doesnt_validate(self):
+        schema = self.plugin.info()['schema']
+        ignore_missing = p.toolkit.get_validator('ignore_missing')
+        assert ignore_missing in schema['horizontal'], '"horizontal" should ignore missing'
+
+    @mock.patch('ckan.plugins.toolkit.get_action')
+    def test_setup_template_variables_adds_horizontal_as_true_if_it_was_defined(self, _):
+        template_variables = self._setup_template_variables(resource_view={'horizontal': 'True'})
+
+        horizontal = template_variables['resource_view']['horizontal']
+        assert horizontal is True, horizontal
+
+    @mock.patch('ckan.plugins.toolkit.get_action')
+    def test_setup_template_variables_adds_horizontal_as_false_if_it_was_undefined(self, _):
+        template_variables = self._setup_template_variables(resource_view={})
+
+        horizontal = template_variables['resource_view']['horizontal']
+        assert horizontal is False, horizontal
+
     def test_chart_type(self):
         assert self.plugin.CHART_TYPE == 'bars', '"CHART_TYPE" should be "bars"'
 

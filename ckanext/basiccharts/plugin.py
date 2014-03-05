@@ -95,10 +95,21 @@ class BarChart(LineChart):
 
     def info(self):
         info = super(BarChart, self).info()
+        info['schema']['horizontal'] = [ignore_missing]
         info['name'] = 'barchart'
         info['title'] = 'Bar Chart'
 
         return info
+
+    def setup_template_variables(self, context, data_dict):
+        horizontal = bool(data_dict['resource_view'].get('horizontal'))
+        data_dict['resource_view']['horizontal'] = horizontal
+
+        superclass = super(BarChart, self)
+        return superclass.setup_template_variables(context, data_dict)
+
+    def form_template(self, context, data_dict):
+        return 'barchart_form.html'
 
 
 class PieChart(BaseChart):

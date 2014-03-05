@@ -82,6 +82,7 @@ this.ckan.views.basiccharts = this.ckan.views.basiccharts || {};
           lines: { show: true },
           bars: {
             show: true,
+            horizontal: params.horizontal,
             align: "center",
             barWidth: barWidth
           }
