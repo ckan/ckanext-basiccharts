@@ -167,7 +167,7 @@ this.ckan.views.basiccharts = this.ckan.views.basiccharts || {};
     $.each(records, function(i, record) {
       var y = record[params.y_axis],
           yParsed = yAxisParser(y),
-          series = record[params.series];
+          series = record[params.series] || '';
 
       if (y === null) {
         return;

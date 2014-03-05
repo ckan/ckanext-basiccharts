@@ -29,31 +29,38 @@
   </div>
 {% endmacro %}
 
-{% set templateFilterInputs = selectAndInput('filter_fields', 'filter_values', selectOptions=fields) %}
-{% set filters = { 'fields': resource_view['filter_fields'], 'values': resource_view['filter_values'] } %}
-
-<div
-  data-module = "basiccharts_filters_form"
-  data-module-template-filter-inputs = "{{ h.remove_linebreaks(templateFilterInputs) }}"
-  data-module-filters-selector = ".basicCharts-filters"
-  data-module-add-filter-selector = ".basicCharts-addFilter"
-  data-module-remove-filter-selector = ".basicCharts-removeFilter"
-  >
-  {{
-      filtersInputs('filters', 'filter_fields', 'filter_values',
-          label=_('Filters'), options=fields, filters=filters, classes=["control-filters"])
-  }}
-</div>
-
-{{
-    form.select('series', label=_('Series'), options=fields,
-        selected=resource_view['series'], is_required=true)
-}}
-
-{{
-    form.select('y_axis', label=_('Y Axis'), options=fields,
-        selected=resource_view['y_axis'], is_required=true)
-}}
-
 {% block form %}
+
+    {% set templateFilterInputs = selectAndInput('filter_fields', 'filter_values', selectOptions=fields) %}
+    {% set filters = { 'fields': resource_view['filter_fields'], 'values': resource_view['filter_values'] } %}
+
+    <div
+      data-module = "basiccharts_filters_form"
+      data-module-template-filter-inputs = "{{ h.remove_linebreaks(templateFilterInputs) }}"
+      data-module-filters-selector = ".basicCharts-filters"
+      data-module-add-filter-selector = ".basicCharts-addFilter"
+      data-module-remove-filter-selector = ".basicCharts-removeFilter"
+      >
+      {{
+          filtersInputs('filters', 'filter_fields', 'filter_values',
+              label=_('Filters'), options=fields, filters=filters, classes=["control-filters"])
+      }}
+    </div>
+
+    {% if series_is_required %}
+      {% set series_fields = fields %}
+    {% else %}
+      {% set series_fields = [{'value': ''}] + fields %}
+    {% endif %}
+
+    {{
+        form.select('series', label=_('Series'), options=series_fields,
+            selected=resource_view['series'], is_required=series_is_required)
+    }}
+
+    {{
+        form.select('y_axis', label=_('Y Axis'), options=fields,
+            selected=resource_view['y_axis'], is_required=true)
+    }}
+
 {% endblock %}

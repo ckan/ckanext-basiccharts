@@ -288,6 +288,15 @@ class TestBarChart(TestLineChart):
     def teardown_class(cls):
         p.unload('barchart')
 
+    def test_schema_series_is_required(self):
+        # Ignoring method as we change the validations
+        pass
+
+    def test_schema_series_doesnt_validate(self):
+        schema = self.plugin.info()['schema']
+        ignore_missing = p.toolkit.get_validator('ignore_missing')
+        assert ignore_missing in schema['series'], '"series" should ignore missing'
+
     def test_schema_has_horizontal(self):
         schema = self.plugin.info()['schema']
         assert schema.get('horizontal') is not None, 'Schema should define "horizontal"'

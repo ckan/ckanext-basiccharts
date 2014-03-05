@@ -53,6 +53,7 @@ class BaseChart(p.SingletonPlugin):
         return {'resource': resource,
                 'resource_view': resource_view,
                 'fields': fields,
+                'series_is_required': True,
                 'chart_type': self.CHART_TYPE}
 
     def view_template(self, context, data_dict):
@@ -95,17 +96,22 @@ class BarChart(LineChart):
     def info(self):
         info = super(BarChart, self).info()
         info['schema']['horizontal'] = [ignore_missing]
+        info['schema']['series'] = [ignore_missing]
         info['name'] = 'barchart'
         info['title'] = 'Bar Chart'
 
         return info
 
     def setup_template_variables(self, context, data_dict):
-        horizontal = bool(data_dict['resource_view'].get('horizontal'))
-        data_dict['resource_view']['horizontal'] = horizontal
-
         superclass = super(BarChart, self)
-        return superclass.setup_template_variables(context, data_dict)
+        template_vars = superclass.setup_template_variables(context, data_dict)
+
+        horizontal = bool(template_vars['resource_view'].get('horizontal'))
+        template_vars['resource_view']['horizontal'] = horizontal
+
+        template_vars['series_is_required'] = False
+
+        return template_vars
 
     def form_template(self, context, data_dict):
         return 'barchart_form.html'

@@ -1,6 +1,7 @@
 {% extends 'basechart_form.html' %}
 
 {% block form %}
+{{ super() }}
 {{
     form.select('x_axis', label=_('X Axis'), options=fields,
         selected=resource_view['x_axis'], is_required=true)
