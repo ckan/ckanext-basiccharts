@@ -28,7 +28,7 @@ this.ckan.views.basiccharts = this.ckan.views.basiccharts || {};
     ).done(function(fetch, query) {
       var fields = groupByFieldType(fetch.fields),
           config = plotConfig(fields, params),
-          data = prepareDataForPlot(fields, query.hits, config.xaxis, params);
+          data = prepareDataForPlot(fields, query.hits, config.xaxis, config.yaxis, params);
 
       if (sortData) {
         data = sortData(data);
@@ -78,10 +78,12 @@ this.ckan.views.basiccharts = this.ckan.views.basiccharts || {};
     return result;
   }
 
-  function prepareDataForPlot(fields, records, xAxis, params) {
+  function prepareDataForPlot(fields, records, xAxis, yAxis, params) {
     var grouppedData = convertAndGroupDataBySeries(fields, records, params),
         xAxisMode = xAxis && xAxis.mode,
-        barWidth = (xAxisMode === "time") ? 60*60*24*30*1000 : 0.5,
+        yAxisMode = yAxis.mode,
+        areWePlottingTime = (yAxisMode === "time" || xAxisMode === "time"),
+        barWidth = areWePlottingTime ? 60*60*24*30*1000 : 0.5,
         chartTypes = {
           lines: { show: true },
           bars: {
