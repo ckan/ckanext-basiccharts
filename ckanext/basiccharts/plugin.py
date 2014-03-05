@@ -131,5 +131,4 @@ def _get_fields(resource):
 
 def _remove_linebreaks(string):
     '''Convert a string to be usable in JavaScript'''
-    print string
     return str(string).replace('\n', '')
