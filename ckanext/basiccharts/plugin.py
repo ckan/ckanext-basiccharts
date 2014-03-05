@@ -46,8 +46,7 @@ class BaseChart(p.SingletonPlugin):
         resource = data_dict['resource']
         resource_view = data_dict['resource_view']
         resource_view = self._filter_fields_and_values_as_list(resource_view)
-        resource_view['show_legends'] = resource_view.get('show_legends',
-                                                          False)
+        resource_view['show_legends'] = bool(resource_view.get('show_legends'))
 
         fields = _get_fields_without_id(resource)
 

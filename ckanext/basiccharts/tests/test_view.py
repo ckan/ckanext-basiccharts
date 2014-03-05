@@ -207,6 +207,13 @@ class TestBaseChart(object):
         assert filter_values == ['value1', 'value2'], filter_values
 
     @mock.patch('ckan.plugins.toolkit.get_action')
+    def test_setup_template_variables_adds_show_legends_as_true_if_it_was_defined(self, _):
+        template_variables = self._setup_template_variables(resource_view={'show_legends': 'True'})
+
+        show_legends = template_variables['resource_view']['show_legends']
+        assert show_legends is True, show_legends
+
+    @mock.patch('ckan.plugins.toolkit.get_action')
     def test_setup_template_variables_adds_show_legends_as_false_if_it_was_undefined(self, _):
         template_variables = self._setup_template_variables(resource_view={})
 
