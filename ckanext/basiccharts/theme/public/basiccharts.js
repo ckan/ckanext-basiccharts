@@ -153,17 +153,26 @@ this.ckan.views.basiccharts = this.ckan.views.basiccharts || {};
         xAxisParser = parsers[fields[params.x_axis]],
         yAxisParser = parsers[fields[params.y_axis]];
     $.each(records, function(i, record) {
-      var y = yAxisParser(record[params.y_axis]),
+      var y = record[params.y_axis],
+          yParsed = yAxisParser(y),
           series = record[params.series];
 
-      if (params.x_axis) {
-        var x = xAxisParser(record[params.x_axis]);
+      if (y === null) {
+        return;
+      }
 
+      if (params.x_axis) {
+        var x = record[params.x_axis],
+            xParsed = xAxisParser(x);
+
+        if (x === null) {
+          return;
+        }
         result[series] = result[series] || [];
-        result[series].push([x, y]);
+        result[series].push([xParsed, yParsed]);
       } else {
         result[series] = result[series] || 0;
-        result[series] = result[series] + y;
+        result[series] = result[series] + yParsed;
       }
     });
     return result;
