@@ -113,6 +113,7 @@ this.ckan.views.basiccharts = this.ckan.views.basiccharts || {};
           timestamp: { mode: "time" },
           text: {
             mode: "categories",
+            tickColor: "rgba(0, 0, 0, 0)",
             tickFormatter: function (value, axis) {
               return value;
             }
@@ -139,7 +140,8 @@ this.ckan.views.basiccharts = this.ckan.views.basiccharts || {};
     } else {
       config = $.extend(config, {
         grid: {
-          hoverable: true
+          hoverable: true,
+          borderWidth: 0
         },
         legend: {
           show: params.show_legends
