@@ -111,10 +111,10 @@ class TestBaseChart(object):
         schema = self.plugin.info()['schema']
         assert schema.get('series') is not None, 'Schema should define "series"'
 
-    def test_schema_series_is_required(self):
+    def test_schema_series_doesnt_validate(self):
         schema = self.plugin.info()['schema']
-        not_empty = p.toolkit.get_validator('not_empty')
-        assert not_empty in schema['series'], '"series" should be required'
+        ignore_missing = p.toolkit.get_validator('ignore_missing')
+        assert ignore_missing in schema['series'], '"series" should ignore missing'
 
     def test_schema_has_show_legends(self):
         schema = self.plugin.info()['schema']
@@ -244,6 +244,12 @@ class TestBaseChart(object):
         assert 'chart_type' in template_variables
         assert template_variables['chart_type'] == self.plugin.CHART_TYPE
 
+    @mock.patch('ckan.plugins.toolkit.get_action')
+    def test_setup_template_variables_adds_series_is_required_as_false(self, _):
+        template_variables = self._setup_template_variables()
+        assert 'series_is_required' in template_variables
+        assert template_variables['series_is_required'] == False
+
     def _setup_template_variables(self, resource={'id': 'id'}, resource_view={}):
         context = {}
         data_dict = {
@@ -287,15 +293,6 @@ class TestBarChart(TestLineChart):
     @classmethod
     def teardown_class(cls):
         p.unload('barchart')
-
-    def test_schema_series_is_required(self):
-        # Ignoring method as we change the validations
-        pass
-
-    def test_schema_series_doesnt_validate(self):
-        schema = self.plugin.info()['schema']
-        ignore_missing = p.toolkit.get_validator('ignore_missing')
-        assert ignore_missing in schema['series'], '"series" should ignore missing'
 
     def test_schema_has_horizontal(self):
         schema = self.plugin.info()['schema']
