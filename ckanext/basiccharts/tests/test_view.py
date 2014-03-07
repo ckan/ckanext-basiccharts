@@ -62,8 +62,8 @@ class TestBaseChart(object):
     def test_chart_type(self):
         assert self.plugin.CHART_TYPE == 'base', '"CHART_TYPE" should be "base"'
 
-    def test_series_is_required(self):
-        assert self.plugin.SERIES_IS_REQUIRED == False, '"SERIES_IS_REQUIRED" should be false'
+    def test_group_by_is_required(self):
+        assert self.plugin.GROUP_BY_IS_REQUIRED == False, '"GROUP_BY_IS_REQUIRED" should be false'
 
     def test_plugin_templates_path_is_added_to_config(self):
         filename = inspect.getfile(inspect.currentframe())
@@ -113,25 +113,25 @@ class TestBaseChart(object):
         not_empty = p.toolkit.get_validator('not_empty')
         assert not_empty in schema['y_axis'], '"y_axis" should be required'
 
-    def test_schema_has_series(self):
+    def test_schema_has_group_by(self):
         schema = self.plugin.info()['schema']
-        assert schema.get('series') is not None, 'Schema should define "series"'
+        assert schema.get('group_by') is not None, 'Schema should define "group_by"'
 
-    def test_schema_series_doesnt_validate_if_series_isnt_required(self):
-        original_value = self.plugin.SERIES_IS_REQUIRED
-        self.plugin.SERIES_IS_REQUIRED = False
+    def test_schema_group_by_doesnt_validate_if_group_by_isnt_required(self):
+        original_value = self.plugin.GROUP_BY_IS_REQUIRED
+        self.plugin.GROUP_BY_IS_REQUIRED = False
         schema = self.plugin.info()['schema']
-        self.plugin.SERIES_IS_REQUIRED = original_value
+        self.plugin.GROUP_BY_IS_REQUIRED = original_value
         ignore_missing = p.toolkit.get_validator('ignore_missing')
-        assert ignore_missing in schema['series'], '"series" should ignore missing'
+        assert ignore_missing in schema['group_by'], '"group_by" should ignore missing'
 
-    def test_schema_series_is_required_if_series_is_required(self):
-        original_value = self.plugin.SERIES_IS_REQUIRED
-        self.plugin.SERIES_IS_REQUIRED = True
+    def test_schema_group_by_is_required_if_group_by_is_required(self):
+        original_value = self.plugin.GROUP_BY_IS_REQUIRED
+        self.plugin.GROUP_BY_IS_REQUIRED = True
         schema = self.plugin.info()['schema']
-        self.plugin.SERIES_IS_REQUIRED = original_value
+        self.plugin.GROUP_BY_IS_REQUIRED = original_value
         not_empty = p.toolkit.get_validator('not_empty')
-        assert not_empty in schema['series'], '"series" should be required'
+        assert not_empty in schema['group_by'], '"group_by" should be required'
 
     def test_schema_has_show_legends(self):
         schema = self.plugin.info()['schema']
@@ -262,10 +262,10 @@ class TestBaseChart(object):
         assert template_variables['chart_type'] == self.plugin.CHART_TYPE
 
     @mock.patch('ckan.plugins.toolkit.get_action')
-    def test_setup_template_variables_defines_series_is_required_correctly(self, _):
+    def test_setup_template_variables_defines_group_by_is_required_correctly(self, _):
         template_variables = self._setup_template_variables()
-        assert 'series_is_required' in template_variables
-        assert template_variables['series_is_required'] == self.plugin.SERIES_IS_REQUIRED
+        assert 'group_by_is_required' in template_variables
+        assert template_variables['group_by_is_required'] == self.plugin.GROUP_BY_IS_REQUIRED
 
     def _setup_template_variables(self, resource={'id': 'id'}, resource_view={}):
         context = {}
@@ -352,5 +352,5 @@ class TestPieChart(TestBaseChart):
     def test_chart_type(self):
         assert self.plugin.CHART_TYPE == 'pie', '"CHART_TYPE" should be "pie"'
 
-    def test_series_is_required(self):
-        assert self.plugin.SERIES_IS_REQUIRED == True, '"SERIES_IS_REQUIRED" should be true'
+    def test_group_by_is_required(self):
+        assert self.plugin.GROUP_BY_IS_REQUIRED == True, '"GROUP_BY_IS_REQUIRED" should be true'

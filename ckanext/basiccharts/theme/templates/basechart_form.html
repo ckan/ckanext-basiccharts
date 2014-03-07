@@ -47,15 +47,15 @@
       }}
     </div>
 
-    {% if series_is_required %}
-      {% set series_fields = fields %}
+    {% if group_by_is_required %}
+      {% set group_by_fields = fields %}
     {% else %}
-      {% set series_fields = [{'value': ''}] + fields %}
+      {% set group_by_fields = [{'value': ''}] + fields %}
     {% endif %}
 
     {{
-        form.select('series', label=_('Series'), options=series_fields,
-            selected=resource_view['series'], is_required=series_is_required)
+        form.select('group_by', label=_('Group by'), options=group_by_fields,
+            selected=resource_view['group_by'], is_required=group_by_is_required)
     }}
 
     {{

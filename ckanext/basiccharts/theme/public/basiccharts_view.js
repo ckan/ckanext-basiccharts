@@ -70,13 +70,13 @@ ckan.module("basiccharts_view", function (jQuery) {
 
     function sortData(data) {
       var result = data,
-          seriesOrder = params.filters[params.series],
+          groupByOrder = params.filters[params.group_by],
           xAxisOrder = params.filters[params.x_axis];
 
       // Order legends
-      if (seriesOrder) {
+      if (groupByOrder) {
         result.sort(function (a, b) {
-          return seriesOrder.indexOf(a.label) - seriesOrder.indexOf(b.label);
+          return groupByOrder.indexOf(a.label) - groupByOrder.indexOf(b.label);
         });
       }
 

@@ -79,7 +79,7 @@ this.ckan.views.basiccharts = this.ckan.views.basiccharts || {};
   }
 
   function prepareDataForPlot(fields, records, xAxis, yAxis, params) {
-    var grouppedData = convertAndGroupDataBySeries(fields, records, params),
+    var grouppedData = convertAndGroup(fields, records, params),
         xAxisMode = xAxis && xAxis.mode,
         yAxisMode = yAxis.mode,
         areWePlottingTime = (yAxisMode === "time" || xAxisMode === "time"),
@@ -162,14 +162,14 @@ this.ckan.views.basiccharts = this.ckan.views.basiccharts || {};
     return config;
   }
 
-  function convertAndGroupDataBySeries(fields, records, params) {
+  function convertAndGroup(fields, records, params) {
     var result = {},
         xAxisParser = parsers[fields[params.x_axis]],
         yAxisParser = parsers[fields[params.y_axis]];
     $.each(records, function(i, record) {
       var y = record[params.y_axis],
           yParsed = yAxisParser(y),
-          series = record[params.series] || '';
+          group_by = record[params.group_by] || '';
 
       if (y === null) {
         return;
@@ -182,11 +182,11 @@ this.ckan.views.basiccharts = this.ckan.views.basiccharts || {};
         if (x === null) {
           return;
         }
-        result[series] = result[series] || [];
-        result[series].push([xParsed, yParsed]);
+        result[group_by] = result[group_by] || [];
+        result[group_by].push([xParsed, yParsed]);
       } else {
-        result[series] = result[series] || 0;
-        result[series] = result[series] + yParsed;
+        result[group_by] = result[group_by] || 0;
+        result[group_by] = result[group_by] + yParsed;
       }
     });
     return result;

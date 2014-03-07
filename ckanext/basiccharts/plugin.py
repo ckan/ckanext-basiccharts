@@ -16,7 +16,7 @@ class BaseChart(p.SingletonPlugin):
     '''Class with methods common to all basic charts'''
 
     CHART_TYPE = 'base'
-    SERIES_IS_REQUIRED = False
+    GROUP_BY_IS_REQUIRED = False
 
     p.implements(p.IConfigurer, inherit=True)
     p.implements(p.IResourceView, inherit=True)
@@ -33,10 +33,10 @@ class BaseChart(p.SingletonPlugin):
             'show_legends': [ignore_missing]
         }
 
-        if self.SERIES_IS_REQUIRED:
-            schema['series'] = [not_empty]
+        if self.GROUP_BY_IS_REQUIRED:
+            schema['group_by'] = [not_empty]
         else:
-            schema['series'] = [ignore_missing]
+            schema['group_by'] = [ignore_missing]
 
         return {'icon': 'bar-chart',
                 'schema': schema,
@@ -58,7 +58,7 @@ class BaseChart(p.SingletonPlugin):
         return {'resource': resource,
                 'resource_view': resource_view,
                 'fields': fields,
-                'series_is_required': self.SERIES_IS_REQUIRED,
+                'group_by_is_required': self.GROUP_BY_IS_REQUIRED,
                 'chart_type': self.CHART_TYPE}
 
     def view_template(self, context, data_dict):
@@ -122,7 +122,7 @@ class BarChart(LineChart):
 class PieChart(BaseChart):
 
     CHART_TYPE = 'pie'
-    SERIES_IS_REQUIRED = True
+    GROUP_BY_IS_REQUIRED = True
 
     def info(self):
         info = super(PieChart, self).info()
