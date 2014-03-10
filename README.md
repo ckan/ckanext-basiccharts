@@ -118,3 +118,20 @@ up group by as ```State```, and Y axis as ```Population```. That'll create:
 
 As the legends are always embedded in the chart, there's no ```Show groups'
 legend``` option.
+
+Common problems
+---------------
+
+### There are no side-by-side bars
+
+If you'd tried plotting a timeline of the population growth in California and
+New York as a bar chart, as we did in the last section using a line chart,
+you'd end up with something like this:
+
+![Timeline of population growth groupped by state as bars](doc/img/barchart-date-population-with-groups-problem.png)
+
+Don't let this fool you. It looks like a stacked bar chart, but it's not
+(there's no stacked bars chart as well). The bars aren't stacked, they're
+drawn over each other. This almost always isn't what you want. To fix it, we
+need to support side-by-side bars, but we don't yet. If you'd like to help,
+check issue #8.
