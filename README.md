@@ -28,7 +28,7 @@ Usage
 -----
 
 There are 3 kind of attributes that define what the chart will be: filters,
-groups, and axes.
+axes, and groups.
 
 ### Filters
 
