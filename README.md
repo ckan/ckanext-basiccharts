@@ -52,8 +52,8 @@ you'd create the filter:
 State: California
 ```
 
-When adding multiple filters on the same column, they work as ```OR```. For
-example, to plot just the data for 01-01-2000 and 01-01-2010, you'd do:
+Multiple filters on the same column work as ```OR```. For example, to plot just
+the data for 01-01-2000 and 01-01-2010, you'd do:
 
 ```
 Date: 01-01-2000
