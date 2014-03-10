@@ -116,6 +116,10 @@ up group by as ```State```, and Y axis as ```Population```. That'll create:
 
 ![Timeline of population growth groupped by state](doc/img/piechart-population-by-state.png)
 
+Beware that as we have multiple rows for the same group, what's being plotted
+on the pie chart is the sum of all values. In this case, the sum of the
+population in 1990, 2000, and 2010. If you want a single year, add a filter.
+
 As the legends are always embedded in the chart, there's no ```Show groups'
 legend``` option.
 
