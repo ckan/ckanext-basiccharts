@@ -28,12 +28,8 @@ Usage
 -----
 
 There are 3 kind of attributes that define what the chart will be: filters,
-axes, and groups.
-
-### Filters
-
-If you don't want all data to be plotted in the chart, you can add filters.
-Here, you define what to **include**. For example, consider the following data:
+axes, and groups. We'll create charts in the next sections to define them all
+using the following data:
 
 | State      | Date       | Population   |
 |------------|------------|--------------|
@@ -44,7 +40,13 @@ Here, you define what to **include**. For example, consider the following data:
 | New York   | 01-01-2000 | 18,976,457   |
 | New York   | 01-01-2010 | 19,378,102   |
 
-If you want to display just data for California, you'd create a filter:
+### Filters
+
+If you don't want all data to be plotted in the chart, you can add filters.
+Here, you define what to **include**.
+
+For example, with the sample data, if you want to display just for California,
+you'd create the filter:
 
 ```
 State: California
