@@ -134,4 +134,4 @@ Don't let this fool you. It looks like a stacked bar chart, but it's not
 (there's no stacked bars chart as well). The bars aren't stacked, they're
 drawn over each other. This almost always isn't what you want. To fix it, we
 need to support side-by-side bars, but we don't yet. If you'd like to help,
-check issue #8.
+check issue [#8](https://github.com/ckan/ckanext-basiccharts/issues/8).
