@@ -84,3 +84,35 @@ u'timestamp', 'id': u'Date'}, {'type': u'numeric', 'id': u'Population'}]
 Just confirm that the types defined are correct. If not, try to understand why
 and fix it, as the charts created might behave incorrectly. The DataStore's
 documentation might help you.
+
+### Groups
+
+This allows you to group the data being plotted, based on a certain column.
+It's optional for bar and line charts, but required for pie charts.
+
+For example, say that you want to create a line chart that shows California and
+New York's population growth. You define ```Date``` to be your X axis, and
+```Population``` to be your Y axis. Then, when you preview the chart, it'll be
+like:
+
+![Timeline of population growth without groups](doc/img/linechart-date-population-no-groups.png)
+
+Not what you'd want. The problem is that when there's no group, all data is
+groupped together. You'd like to separate the population from California from
+the New York's. To do that, you need to group by ```State```.
+
+![Timeline of population growth groupped by state](doc/img/linechart-date-population-with-groups.png)
+
+Much better. Notice that there's a group's legend as well. To enable it, you
+need to check ```Show groups' legend```.
+
+The bar chart works similarly. The pie charts are a bit different. To define
+them, you're required to set up a column to group by. With the same data, if
+you'd want to create a chart for, given the sum of California and New York's
+population, which percentage belongs to one and which to the other, you'd set
+up group by as ```State```, and Y axis as ```Population```. That'll create:
+
+![Timeline of population growth groupped by state](doc/img/piechart-population-by-state.png)
+
+As the legends are always embedded in the chart, there's no ```Show groups'
+legend``` option.
