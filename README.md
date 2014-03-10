@@ -65,3 +65,22 @@ in 2000 or 2010. In techie terms, it'll be ```State == "California" AND (Year
 
 Currently you can't exclude data, only include. There's no way to negate a
 filter (to all states that are not California, for example).
+
+### Axes
+
+This defines what column will be plotted in each axis. Line and bar charts have
+two axes, Y and X; pie charts only have one, Y.
+
+As long as the DataStore interpreted the column types correctly, the charts
+will work with any kind of data (numeric, text, or date). To check if this is
+the case, check the ```Upload log``` in the ```Manage resource```'s
+```DataStore``` tab. You should see something like:
+
+```
+Determined headers and types: [{'type': u'text', 'id': u'State'}, {'type':
+u'numeric', 'id': u'Year'}, {'type': u'numeric', 'id': u'Population'}]
+```
+
+Just confirm that the types defined are correct. If not, try to understand why
+and fix it, as the charts created might behave incorrectly. The DataStore's
+documentation might help you.
