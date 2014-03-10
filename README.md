@@ -35,14 +35,14 @@ axes, and groups.
 If you don't want all data to be plotted in the chart, you can add filters.
 Here, you define what to **include**. For example, consider the following data:
 
-| State      | Year | Population   |
-|------------|------|--------------|
-| California | 1990 | 29,760,021   |
-| California | 2000 | 33,871,648   |
-| California | 2010 | 37,253,956   |
-| New York   | 1990 | 17,990,455   |
-| New York   | 2000 | 18,976,457   |
-| New York   | 2010 | 19,378,102   |
+| State      | Date       | Population   |
+|------------|------------|--------------|
+| California | 01-01-1990 | 29,760,021   |
+| California | 01-01-2000 | 33,871,648   |
+| California | 01-01-2010 | 37,253,956   |
+| New York   | 01-01-1990 | 17,990,455   |
+| New York   | 01-01-2000 | 18,976,457   |
+| New York   | 01-01-2010 | 19,378,102   |
 
 If you want to display just data for California, you'd create a filter:
 
@@ -51,17 +51,17 @@ State: California
 ```
 
 When adding multiple filters on the same column, they work as ```OR```. For
-example, to plot just the data for 2000 and 2010, you'd do:
+example, to plot just the data for 01-01-2000 and 01-01-2010, you'd do:
 
 ```
-Year: 2000
-Year: 2010
+Date: 01-01-2000
+Date: 01-01-2010
 ```
 
 Multiple filters on different columns work as ```AND```. If we'd add all
 filters defined in the last paragraphs, we would plot data only for California
-in 2000 or 2010. In techie terms, it'll be ```State == "California" AND (Year
-== 2000 OR Year == 2010)```
+in 01-01-2000 or 01-01-2010. In techie terms, it'll be ```State == "California"
+AND (Date == "01-01-2000" OR Date == "01-01-2010")```
 
 Currently you can't exclude data, only include. There's no way to negate a
 filter (to all states that are not California, for example).
@@ -78,7 +78,7 @@ the case, check the ```Upload log``` in the ```Manage resource```'s
 
 ```
 Determined headers and types: [{'type': u'text', 'id': u'State'}, {'type':
-u'numeric', 'id': u'Year'}, {'type': u'numeric', 'id': u'Population'}]
+u'timestamp', 'id': u'Date'}, {'type': u'numeric', 'id': u'Population'}]
 ```
 
 Just confirm that the types defined are correct. If not, try to understand why
