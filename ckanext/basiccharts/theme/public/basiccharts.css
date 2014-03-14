@@ -19,3 +19,9 @@
   font-size: inherit !important;
   color: inherit !important;
 }
+
+.pages-embed .basicChart {
+  height: 100%;
+  width: 100%;
+}
+
