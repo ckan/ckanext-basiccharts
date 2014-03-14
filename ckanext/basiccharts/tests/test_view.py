@@ -175,53 +175,53 @@ class TestBaseChart(object):
     def test_setup_template_variables_converts_filter_fields_to_list(self, _):
         resource_view = {
           'id': 'resource_id',
-          'filter_fields': 'field'
+          'filter_fields': 'the field'
         }
 
         template_variables = \
           self._setup_template_variables(resource_view=resource_view)
 
         filter_fields = template_variables['resource_view']['filter_fields']
-        assert filter_fields == ['field'], filter_fields
+        assert filter_fields == ['the field'], filter_fields
 
     @mock.patch('ckan.plugins.toolkit.get_action')
     def test_setup_template_variables_maintains_filter_fields_as_list(self, _):
         resource_view = {
           'id': 'resource_id',
-          'filter_fields': ['field1', 'field2']
+          'filter_fields': ['the field1', 'the field2']
         }
 
         template_variables = \
           self._setup_template_variables(resource_view=resource_view)
 
         filter_fields = template_variables['resource_view']['filter_fields']
-        assert filter_fields == ['field1', 'field2'], filter_fields
+        assert filter_fields == ['the field1', 'the field2'], filter_fields
 
     @mock.patch('ckan.plugins.toolkit.get_action')
     def test_setup_template_variables_converts_filter_values_to_list(self, _):
         resource_view = {
           'id': 'resource_id',
-          'filter_values': 'value'
+          'filter_values': 'the value'
         }
 
         template_variables = \
           self._setup_template_variables(resource_view=resource_view)
 
         filter_values = template_variables['resource_view']['filter_values']
-        assert filter_values == ['value'], filter_values
+        assert filter_values == ['the value'], filter_values
 
     @mock.patch('ckan.plugins.toolkit.get_action')
     def test_setup_template_variables_maintains_filter_values_as_list(self, _):
         resource_view = {
           'id': 'resource_id',
-          'filter_values': ['value1', 'value2']
+          'filter_values': ['the value1', 'the value2']
         }
 
         template_variables = \
           self._setup_template_variables(resource_view=resource_view)
 
         filter_values = template_variables['resource_view']['filter_values']
-        assert filter_values == ['value1', 'value2'], filter_values
+        assert filter_values == ['the value1', 'the value2'], filter_values
 
     @mock.patch('ckan.plugins.toolkit.get_action')
     def test_setup_template_variables_adds_show_legends_as_true_if_it_was_defined(self, _):

@@ -2,7 +2,6 @@ import ckan.plugins as p
 
 not_empty = p.toolkit.get_validator('not_empty')
 ignore_missing = p.toolkit.get_validator('ignore_missing')
-aslist = p.toolkit.aslist
 
 
 class BasicCharts(p.SingletonPlugin):
@@ -69,12 +68,14 @@ class BaseChart(p.SingletonPlugin):
         return 'basechart_form.html'
 
     def _filter_fields_and_values_as_list(self, resource_view):
-        if 'filter_fields' in resource_view:
-            if isinstance(resource_view['filter_fields'], basestring):
-                resource_view['filter_fields'] = [resource_view['filter_fields']]
-        if 'filter_values' in resource_view:
-            if isinstance(resource_view['filter_values'], basestring):
-                resource_view['filter_values'] = [resource_view['filter_values']]
+        filter_fields = resource_view.get('filter_fields', [])
+        filter_values = resource_view.get('filter_values', [])
+
+        if isinstance(filter_fields, basestring):
+            resource_view['filter_fields'] = [filter_fields]
+        if isinstance(filter_values, basestring):
+            resource_view['filter_values'] = [filter_values]
+
         return resource_view
 
 
@@ -151,6 +152,7 @@ def _get_fields(resource):
 def _remove_linebreaks(string):
     '''Convert a string to be usable in JavaScript'''
     return str(string).replace('\n', '')
+
 
 def get_filter_values(resource):
     ''' Tries to get out filter values so they can appear in dropdown list.
