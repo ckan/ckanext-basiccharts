@@ -2,11 +2,11 @@
  * jquery.flot.tooltip
  * 
  * description: easy-to-use tooltips for Flot charts
- * version: 0.6.5
+ * version: 0.6.7
  * author: Krzysztof Urbas @krzysu [myviews.pl]
  * website: https://github.com/krzysu/flot.tooltip
  * 
- * build on 2014-01-23
+ * build on 2014-03-14
  * released under MIT License, 2012
 */ 
 (function ($) {
@@ -18,6 +18,8 @@
             content: "%s | X: %x | Y: %y",
             // allowed templates are:
             // %s -> series label,
+            // %lx -> x axis label (requires flot-axislabels plugin https://github.com/markrcote/flot-axislabels),
+            // %ly -> y axis label (requires flot-axislabels plugin https://github.com/markrcote/flot-axislabels),
             // %x -> X value,
             // %y -> Y value,
             // %x.2 -> precision of X value,
@@ -51,6 +53,16 @@
 
         var that = this;
 
+        // detect other flot plugins
+        var plotPluginsLength = $.plot.plugins.length;
+        this.plotPlugins = [];
+
+        if (plotPluginsLength) {
+            for (var p = 0; p < plotPluginsLength; p++) {
+                this.plotPlugins.push($.plot.plugins[p].name);
+            }
+        }
+
         plot.hooks.bindEvents.push(function (plot, eventHolder) {
 
             // get plot options
@@ -68,13 +80,13 @@
             // bind event
             $( plot.getPlaceholder() ).bind("plothover", plothover);
 
-			$(eventHolder).bind('mousemove', mouseMove);
+            $(eventHolder).bind('mousemove', mouseMove);
         });
 
-		plot.hooks.shutdown.push(function (plot, eventHolder){
-			$(plot.getPlaceholder()).unbind("plothover", plothover);
-			$(eventHolder).unbind("mousemove", mouseMove);
-		});
+        plot.hooks.shutdown.push(function (plot, eventHolder){
+            $(plot.getPlaceholder()).unbind("plothover", plothover);
+            $(eventHolder).unbind("mousemove", mouseMove);
+        });
 
         function mouseMove(e){
             var pos = {};
@@ -83,8 +95,8 @@
             that.updateTooltipPosition(pos);
         }
 
-		function plothover(event, pos, item) {
-			var $tip = that.getDomElement();
+        function plothover(event, pos, item) {
+            var $tip = that.getDomElement();
             if (item) {
                 var tipText;
 
@@ -127,7 +139,7 @@
             if(this.tooltipOptions.defaultTheme) {
                 $tip.css({
                     'background': '#fff',
-                    'z-index': '100',
+                    'z-index': '1040',
                     'padding': '0.4em 0.6em',
                     'border-radius': '0.5em',
                     'font-size': '0.8em',
@@ -165,6 +177,8 @@
 
         var percentPattern = /%p\.{0,1}(\d{0,})/;
         var seriesPattern = /%s/;
+        var xLabelPattern = /%lx/; // requires flot-axislabels plugin https://github.com/markrcote/flot-axislabels, will be ignored if plugin isn't loaded
+        var yLabelPattern = /%ly/; // requires flot-axislabels plugin https://github.com/markrcote/flot-axislabels, will be ignored if plugin isn't loaded
         var xPattern = /%x\.{0,1}(\d{0,})/;
         var yPattern = /%y\.{0,1}(\d{0,})/;
         var xPatternWithoutPrecision = "%x";
@@ -205,6 +219,24 @@
             content = content.replace(seriesPattern, "");
         }
 
+        // x axis label match
+        if( this.hasAxisLabel('xaxis', item) ) {
+            content = content.replace(xLabelPattern, item.series.xaxis.options.axisLabel);
+        }
+        else {
+            //remove %lx if axis label is undefined or axislabels plugin not present
+            content = content.replace(xLabelPattern, "");
+        }
+
+        // y axis label match
+        if( this.hasAxisLabel('yaxis', item) ) {
+            content = content.replace(yLabelPattern, item.series.yaxis.options.axisLabel);
+        }
+        else {
+            //remove %ly if axis label is undefined or axislabels plugin not present
+            content = content.replace(yLabelPattern, "");
+        }
+
         // time mode axes with custom dateFormat
         if(this.isTimeMode('xaxis', item) && this.isXDateFormat(item)) {
             content = content.replace(xPattern, this.timestampToDate(x, this.tooltipOptions.xDateFormat));
@@ -224,9 +256,35 @@
 
         // change x from number to given label, if given
         if(typeof item.series.xaxis.ticks !== 'undefined') {
-            if(item.series.xaxis.ticks.length > item.dataIndex && !this.isTimeMode('xaxis', item))
-                content = content.replace(xPattern, item.series.xaxis.ticks[item.dataIndex].label);
+
+            var ticks;
+            if(this.hasRotatedXAxisTicks(item)) {
+                // xaxis.ticks will be an empty array if tickRotor is being used, but the values are available in rotatedTicks
+                ticks = 'rotatedTicks';
+            }
+            else {
+                ticks = 'ticks';
+            }
+
+            // see https://github.com/krzysu/flot.tooltip/issues/65
+            var tickIndex = item.dataIndex + item.seriesIndex;
+
+            if(item.series.xaxis[ticks].length > tickIndex && !this.isTimeMode('xaxis', item))
+                content = content.replace(xPattern, item.series.xaxis[ticks][tickIndex].label);
         }
+
+        // change y from number to given label, if given
+        if(typeof item.series.yaxis.ticks !== 'undefined') {
+            for (var index in item.series.yaxis.ticks) {
+                if (item.series.yaxis.ticks.hasOwnProperty(index)) {
+                    var value = (this.isCategoriesMode('yaxis', item)) ? item.series.yaxis.ticks[index].label : item.series.yaxis.ticks[index].v;
+                    if (value === y) {
+                        content = content.replace(yPattern, item.series.yaxis.ticks[index].label);
+                    }
+                }
+            }
+        }
+
         // if no value customization, use tickFormatter by default
         if(typeof item.series.xaxis.tickFormatter !== 'undefined') {
             //escape dollar
@@ -253,6 +311,10 @@
         return (typeof this.tooltipOptions.yDateFormat !== 'undefined' && this.tooltipOptions.yDateFormat !== null);
     };
 
+    FlotTooltip.prototype.isCategoriesMode = function(axisName, item) {
+        return (typeof item.series[axisName].options.mode !== 'undefined' && item.series[axisName].options.mode === 'categories');
+    };
+
     //
     FlotTooltip.prototype.timestampToDate = function(tmst, dateFormat) {
         var theDate = new Date(tmst*1);
@@ -276,6 +338,18 @@
         return content;
     };
 
+    // other plugins detection below
+
+    // check if flot-axislabels plugin (https://github.com/markrcote/flot-axislabels) is used and that an axis label is given
+    FlotTooltip.prototype.hasAxisLabel = function(axisName, item) {
+        return (this.plotPlugins.indexOf('axisLabels') !== -1 && typeof item.series[axisName].options.axisLabel !== 'undefined' && item.series[axisName].options.axisLabel.length > 0);
+    };
+
+    // check whether flot-tickRotor, a plugin which allows rotation of X-axis ticks, is being used
+    FlotTooltip.prototype.hasRotatedXAxisTicks = function(item) {
+        return ($.grep($.plot.plugins, function(p){ return p.name === "tickRotor"; }).length === 1 && item.series.xaxis.rotatedTicks !== 'undefined');
+    };
+
     //
     var init = function(plot) {
       new FlotTooltip(plot);
@@ -286,7 +360,7 @@
         init: init,
         options: defaultOptions,
         name: 'tooltip',
-        version: '0.6.1'
+        version: '0.6.7'
     });
 
 })(jQuery);
