@@ -21,10 +21,11 @@ this.ckan.views.basiccharts = this.ckan.views.basiccharts || {};
   };
 
   function initPlot(elementId, sortData, resource, params) {
-    var sql = generateSqlQuery(resource, params);
+    var queryParams = generateQueryParams(resource, params);
+
     $.when(
       recline.Backend.Ckan.fetch(resource),
-      recline.Backend.Ckan.search_sql(sql, resource)
+      recline.Backend.Ckan.query(queryParams, resource)
     ).done(function(fetch, query) {
       var fields = groupByFieldType(fetch.fields),
           config = plotConfig(fields, params),
@@ -38,36 +39,30 @@ this.ckan.views.basiccharts = this.ckan.views.basiccharts || {};
     });
   }
 
-  function generateSqlQuery(resource, params) {
-    var sql = "SELECT * FROM \""+resource.id+"\"",
-        filters = {};
+  function generateQueryParams(resource, params) {
+    var query = {
+      filters: [],
+      sort: [],
+      size: 1000
+    };
 
     if (params.filters) {
-      $.each(params.filters, function (field, values) {
-        filters['"' + field + '"'] = values;
+      query.filters = $.map(params.filters, function (values, field) {
+        return {
+          type: "term",
+          field: field,
+          term: values
+        };
       });
-
-      var filtersSQL = $.map(filters, function (values, field) {
-        return field + " IN ('" + values.join("','") + "')";
-      });
-
-      if (filtersSQL.length > 0) {
-        sql += " WHERE " + filtersSQL.join(" AND ");
-      }
     }
 
-    var orderBy = Object.keys(filters).sort().map(function (filter) {
-      return filter + " ASC";
-    });
     if (params.horizontal) {
-      orderBy.push("\"" + params.x_axis + "\" ASC");
+      query.sort = [{ field: params.x_axis, order: "ASC" }];
     } else {
-      orderBy.push("\"" + params.y_axis + "\" DESC");
+      query.sort = [{ field: params.y_axis, order: "DESC" }];
     }
 
-    sql += " ORDER BY " + orderBy.join(",");
-
-    return sql;
+    return query;
   }
 
   function groupByFieldType(fields) {
