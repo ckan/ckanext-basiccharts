@@ -71,7 +71,8 @@ ckan.module("basiccharts_view", function (jQuery) {
     function sortData(data) {
       var result = data,
           groupByOrder = params.filters[params.group_by],
-          xAxisOrder = params.filters[params.x_axis];
+          xAxisOrder = params.filters[params.x_axis],
+          yAxisOrder = params.filters[params.y_axis];
 
       // Order legends
       if (groupByOrder) {
@@ -91,6 +92,21 @@ ckan.module("basiccharts_view", function (jQuery) {
         $.each(result, function (i, element) {
           element.data.sort(function (a, b) {
             return xAxisOrder.indexOf(a[0]) - xAxisOrder.indexOf(b[0]);
+          });
+        });
+      }
+
+      // Order y axis
+      if (params.y_axis) {
+        if (yAxisOrder === undefined) {
+          yAxisOrder = $.map(result[1].data, function (d) {
+            return d[1];
+          });
+        }
+
+        $.each(result, function (i, element) {
+          element.data.sort(function (a, b) {
+            return yAxisOrder.indexOf(b[1]) - yAxisOrder.indexOf(a[1]);
           });
         });
       }
