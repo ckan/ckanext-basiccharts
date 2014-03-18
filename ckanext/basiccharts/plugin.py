@@ -315,3 +315,54 @@ def get_filter_values(resource):
                                       for value
                                       in sorted(list(distinct_values))]
     return filter_values
+
+
+############# MONKEY PATCH ####################
+
+import ckanext.datastore.db
+ValidationError = p.toolkit.ValidationError
+
+
+def _where(field_ids, data_dict):
+    '''Return a SQL WHERE clause from data_dict filters and q'''
+    filters = data_dict.get('filters', {})
+
+    if not isinstance(filters, dict):
+        raise ValidationError({
+            'filters': ['Not a json object']}
+        )
+
+    where_clauses = []
+    values = []
+
+    for field, value in filters.iteritems():
+        if field not in field_ids:
+            raise ValidationError({
+                'filters': ['field "{0}" not in table'.format(field)]}
+            )
+
+        ##### patch here #####
+        if isinstance(value, list):
+            where_clauses.append(
+                u'"{0}" in ({1})'.format(field,
+                                         ','.join(['%s'] * len(value)))
+            )
+            values.extend(value)
+            continue
+        ##### patch ends here #####
+
+        where_clauses.append(u'"{0}" = %s'.format(field))
+        values.append(value)
+
+    # add full-text search where clause
+    if data_dict.get('q'):
+        where_clauses.append(u'_full_text @@ query')
+
+    where_clause = u' AND '.join(where_clauses)
+    if where_clause:
+        where_clause = u'WHERE ' + where_clause
+    return where_clause, values
+
+ckanext.datastore.db._where = _where
+
+############# finish patch ####################
