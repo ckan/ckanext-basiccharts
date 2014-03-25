@@ -17,6 +17,7 @@ ckan.module("basiccharts_filters_form", function (jQuery) {
   function initialize() {
     var self = this,
         templateFilterInputs = self.options.templateFilterInputs,
+        inputFieldTemplateEl = $(templateFilterInputs).find('input[type="text"][name]'),
         filtersDiv = self.el.find(self.options.filtersSelector),
         addFilterEl = self.el.find(self.options.addFilterSelector),
         removeFilterSelector = self.options.removeFilterSelector,
@@ -47,7 +48,7 @@ ckan.module("basiccharts_filters_form", function (jQuery) {
           select2Container = parentEl.find('.select2-container');
       evt.preventDefault();
       select2Container.remove();
-      inputField.replaceWith('<input type="text" value="" name="filter_values">');
+      inputField.replaceWith(inputFieldTemplateEl.clone());
       applyDropdown(el, filterValues);
     });
   }
