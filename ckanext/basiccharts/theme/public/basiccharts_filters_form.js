@@ -4,13 +4,9 @@ ckan.module("basiccharts_filters_form", function (jQuery) {
   function applyDropdown(selectField, filterValues) {
     var inputField = selectField.parent().find('input'),
         inputValue = inputField.val(),
-        valueList;
+        valueList = filterValues[selectField.val()];
 
-    valueList = filterValues[selectField.val()];
     if (valueList) {
-      inputField.replaceWith('<input type="hidden" value="" name="filter_values">');
-      inputField = selectField.parent().find('input');
-      inputField.val(inputValue);
       inputField.select2({
           data: valueList,
           width: '220px'
