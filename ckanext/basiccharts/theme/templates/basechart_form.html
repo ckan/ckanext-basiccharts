@@ -1,5 +1,5 @@
 {% import 'macros/form.html' as form %}
-{% resource 'basiccharts/form' %}
+{% resource 'viewhelpers/form' %}
 
 {% macro filtersInputs(name, selectName, inputName, label='', options='', error='', filters={}, classes=[], attrs={}, is_required=false) %}
   {% set classes = (classes|list) %}
@@ -35,7 +35,7 @@
     {% set filters = { 'fields': resource_view['filter_fields'], 'values': resource_view['filter_values'] } %}
 
     <div
-      data-module = "basiccharts_filters_form"
+      data-module = "filters_form"
       data-module-template-filter-inputs = "{{ h.remove_linebreaks(templateFilterInputs) }}"
       data-module-filters-selector = ".basicCharts-filters"
       data-module-add-filter-selector = ".basicCharts-addFilter"
