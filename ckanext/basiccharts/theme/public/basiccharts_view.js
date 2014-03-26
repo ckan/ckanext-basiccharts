@@ -5,15 +5,15 @@ ckan.module("basiccharts_view", function (jQuery) {
     var routeParams = window.location.search.queryStringToJSON(),
         params = {
           chart_type: chartType,
-          filters: setupFilters(defaultParams, routeParams)
+          filters: setupFilters(defaultParams)
         };
 
     return $.extend({}, defaultParams, routeParams, params);
   }
 
-  function setupFilters(defaultParams, routeParams) {
+  function setupFilters(defaultParams) {
     var defaultFilters = parseFilters(defaultParams),
-        routeFilters = parseRouteFilters(routeParams);
+        routeFilters = ckan.views.viewhelpers.filters.get();
 
     return $.extend({}, defaultFilters, routeFilters);
   }
@@ -30,26 +30,6 @@ ckan.module("basiccharts_view", function (jQuery) {
       if (value === "") {
         return;
       }
-      filters[field] = filters[field] || [];
-      filters[field].push(value);
-    });
-
-    return filters;
-  }
-
-  function parseRouteFilters(routeParams) {
-    // The filters are in format "field:value|field:value|field:value"
-    if (!routeParams || !routeParams.filters) {
-      return {};
-    }
-    var filters = {},
-        fieldValuesStr = routeParams.filters.split("|");
-
-    $.each(fieldValuesStr, function (i, fieldValueStr) {
-      var fieldValue = fieldValueStr.split(":"),
-          field = fieldValue[0],
-          value = fieldValue[1];
-
       filters[field] = filters[field] || [];
       filters[field].push(value);
     });
