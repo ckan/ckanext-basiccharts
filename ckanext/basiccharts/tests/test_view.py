@@ -9,46 +9,6 @@ import ckan.plugins as p
 import ckanext.basiccharts
 
 
-class TestBasicCharts(object):
-    @classmethod
-    def setup_class(cls):
-        p.load('basiccharts')
-        cls.plugin = p.get_plugin('basiccharts')
-
-    @classmethod
-    def teardown_class(cls):
-        p.unload('basiccharts')
-
-    def test_get_helpers_should_define_remove_linebreaks(self):
-        helpers = self.plugin.get_helpers()
-        assert helpers.get('remove_linebreaks') is not None,\
-            'Plugin should define "remove_linebreaks" helper'
-
-    def test_remove_linebreaks_removes_linebreaks(self):
-        helpers = self.plugin.get_helpers()
-        remove_linebreaks = helpers['remove_linebreaks']
-
-        test_string = 'foo\nbar\nbaz'
-        result = remove_linebreaks(test_string)
-
-        assert result.find('\n') == -1,\
-            '"remove_linebreaks" should remove line breaks'
-
-    def test_remove_linebreaks_casts_into_str(self):
-        helpers = self.plugin.get_helpers()
-        remove_linebreaks = helpers['remove_linebreaks']
-
-        class StringLike(str):
-            pass
-
-        test_string = StringLike('foo')
-        result = remove_linebreaks(test_string)
-
-        strType = ''.__class__
-        assert result.__class__ == strType,\
-            '"remove_linebreaks" casts into str()'
-
-
 class TestBaseChart(object):
 
     @classmethod
