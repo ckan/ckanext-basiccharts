@@ -1,0 +1,27 @@
+.basicChart {
+  height: 500px;
+}
+
+.basicChart .error {
+  display: none;
+}
+
+.dashboard-grid .basicChart {
+  height: 99%;
+  width: 100%;
+}
+
+.dashboard-grid .basicChart.pie {
+  width: 90%;
+}
+
+.basicChart .pieLabel div {
+  font-size: inherit !important;
+  color: inherit !important;
+}
+
+.pages-embed .basicChart {
+  height: 100%;
+  width: 100%;
+}
+
