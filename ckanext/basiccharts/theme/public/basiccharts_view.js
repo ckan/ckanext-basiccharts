@@ -50,34 +50,35 @@ ckan.module("basiccharts_view", function (jQuery) {
 
     function sortData(data) {
       var result = data,
-          groupByOrder = params.filters[params.group_by],
-          xAxisOrder = params.filters[params.x_axis],
-          yAxisOrder = params.filters[params.y_axis];
+          orders,
+          ordersLength;
 
-      // Order legends
-      if (groupByOrder) {
-        result.sort(function (a, b) {
-          return groupByOrder.indexOf(a.label) - groupByOrder.indexOf(b.label);
-        });
-      }
+      orders = Object.keys(params.filters).sort(function (a, b) {
+        // The order is params.group_by -> params.x_axis -> params.y_axis ->
+        // everything else, lexicographically sorted
+        if (a === params.group_by) {
+          return -1;
+        } else if (a === params.x_axis) {
+          return (b === params.group_by) ? 1 : -1;
+        } else if (a === params.y_axis) {
+          return (b === params.group_by || b === params.x_axis) ? 1 : -1;
+        } else {
+          return a.localeCompare(b);
+        }
+      });
+      ordersLength = orders.length;
 
-      // Order x axis
-      if (xAxisOrder) {
-        $.each(result, function (i, element) {
-          element.data.sort(function (a, b) {
-            return xAxisOrder.indexOf(a[0]) - xAxisOrder.indexOf(b[0]);
-          });
-        });
-      }
+      data.sort(function (a, b) {
+        for (var i = 0; i < ordersLength; i++) {
+          var order = params.filters[orders[i]],
+            result = order.indexOf(a[orders[i]]) - order.indexOf(b[orders[i]]);
 
-      // Order y axis
-      if (yAxisOrder) {
-        $.each(result, function (i, element) {
-          element.data.sort(function (a, b) {
-            return yAxisOrder.indexOf(b[1]) - yAxisOrder.indexOf(a[1]);
-          });
-        });
-      }
+          if (result !== 0) {
+            return result;
+          }
+        }
+        return 0;
+      });
 
       return result;
     }

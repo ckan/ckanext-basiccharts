@@ -29,11 +29,14 @@ this.ckan.views.basiccharts = this.ckan.views.basiccharts || {};
     ).done(function(fetch, query) {
       var fields = groupByFieldType(fetch.fields),
           config = plotConfig(fields, params),
-          data = prepareDataForPlot(fields, query.hits, config.xaxis, config.yaxis, params);
+          hits = query.hits,
+          data;
 
       if (sortData) {
-        data = sortData(data);
+        hits = sortData(hits);
       }
+
+      data = prepareDataForPlot(fields, hits, config.xaxis, config.yaxis, params);
 
       $.plot(elementId, data, config);
     });
