@@ -25,7 +25,7 @@ setup(
 	entry_points=\
 	"""
     [ckan.plugins]
-	basic_grid=ckanext.basiccharts.plugin:BasicGrid
+	basicgrid=ckanext.basiccharts.plugin:BasicGrid
 	linechart=ckanext.basiccharts.plugin:LineChart
 	barchart=ckanext.basiccharts.plugin:BarChart
 	piechart=ckanext.basiccharts.plugin:PieChart
