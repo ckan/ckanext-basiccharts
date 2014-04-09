@@ -1,0 +1,2 @@
+recursive-include    ckanext/basiccharts/theme        *
+recursive-include    ckanext/basiccharts/basicgrid    *
