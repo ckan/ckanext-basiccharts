@@ -24,6 +24,7 @@ you can enable any (or all) of:
 * linechart
 * barchart
 * piechart
+* basicgrid
 
 Finally, restart your webserver. You should see the new chart types as options
 in the view type's list on any resource that's in the DataStore.
