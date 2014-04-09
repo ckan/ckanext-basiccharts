@@ -10,9 +10,13 @@ major browsers (including IE6+).
 Installation
 ------------
 
-To use it, simply clone this repository and run ```python setup.py install```.
+This extension depends on
+[ckanext-viewhelpers](//github.com/ckan/ckanext-viewhelpers). You have to
+install that first.
+
+After that, simply clone this repository and run ```python setup.py install```.
 Then add which charts you'd like to your ```ckan.plugins``` in your CKAN config
-file.
+file. Make sure to put them after ```viewhelpers```.
 
 You have to enable ```basiccharts``` before any of the other charts. Only then,
 you can enable any (or all) of:
