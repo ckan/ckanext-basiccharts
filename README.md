@@ -73,6 +73,9 @@ AND (Date == "01-01-2000" OR Date == "01-01-2010")```
 Currently you can't exclude data, only include. There's no way to negate a
 filter (to all states that are not California, for example).
 
+To learn more about filters, check
+[ckanext-viewhelpers](//github.com/ckan/ckanext-viewhelpers).
+
 ### Axes
 
 This defines what column will be plotted in each axis. Line and bar charts have
