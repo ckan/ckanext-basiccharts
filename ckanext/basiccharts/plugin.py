@@ -37,8 +37,6 @@ class BaseChart(p.SingletonPlugin):
 
         return {'icon': 'bar-chart',
                 'schema': schema,
-                'sizex': 4,
-                'sizey': 3,
                 'iframed': False}
 
     def can_view(self, data_dict):
@@ -126,8 +124,6 @@ class PieChart(BaseChart):
         info = super(PieChart, self).info()
         info['name'] = 'piechart'
         info['title'] = 'Pie Chart'
-        info['sizex'] = 2
-        info['sizey'] = 2
 
         return info
 
