@@ -16,9 +16,9 @@ install that first.
 
 After that, simply clone this repository and run ```python setup.py install```.
 Then add which charts you'd like to your ```ckan.plugins``` in your CKAN config
-file. Make sure to put them after ```viewhelpers```.
+file.
 
-You have to enable ```basiccharts``` before any of the other charts. Only then,
+You have to enable ```viewhelpers``` before any of the other charts. Only then,
 you can enable any (or all) of:
 
 * linechart
