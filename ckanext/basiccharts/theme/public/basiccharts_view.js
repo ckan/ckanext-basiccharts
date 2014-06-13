@@ -82,6 +82,12 @@ ckan.module("basiccharts_view", function (jQuery) {
         var aValue = parseFloat(a[axis]),
             bValue = parseFloat(b[axis]);
         if (isNaN(aValue) || isNaN(bValue)) {
+          // We need to keep all NaN values at one end of the sorted array
+          if (isNaN(aValue)) {
+            return -1;
+          } else if (isNaN(bValue)) {
+            return 1;
+          }
           return 0;
         } else {
           return aValue - bValue;
