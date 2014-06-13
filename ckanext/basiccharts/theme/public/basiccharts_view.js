@@ -82,7 +82,7 @@ ckan.module("basiccharts_view", function (jQuery) {
         var aValue = parseFloat(a[axis]),
             bValue = parseFloat(b[axis]);
         if (isNaN(aValue) || isNaN(bValue)) {
-          return a[axis].localeCompare(b[axis]);
+          return 0;
         } else {
           return aValue - bValue;
         }
