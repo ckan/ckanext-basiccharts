@@ -156,7 +156,7 @@ this.recline.Backend.Ckan = this.recline.Backend.Ckan || {};
       var jqxhr = jQuery.ajax({
         url: searchUrl,
         type: 'POST',
-        data: JSON.stringify(data)
+        data: encodeURIComponent(JSON.stringify(data))
       });
       return jqxhr;
     };
@@ -166,9 +166,9 @@ this.recline.Backend.Ckan = this.recline.Backend.Ckan || {};
       var jqxhr = jQuery.ajax({
         url: searchUrl,
         type: 'GET',
-        data: {
+        data: encodeURIComponent({
           sql: sql
-        }
+        })
       });
       return jqxhr;
     }
