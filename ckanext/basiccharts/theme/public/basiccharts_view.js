@@ -50,34 +50,42 @@ ckan.module("basiccharts_view", function (jQuery) {
 
     function sortData(data) {
       var result = data,
-          orders,
-          ordersLength;
-
-      orders = Object.keys(params.filters).sort(function (a, b) {
-        // The order is params.group_by -> params.x_axis -> params.y_axis ->
-        // everything else, lexicographically sorted
-        if (a === params.group_by) {
-          return -1;
-        } else if (a === params.x_axis) {
-          return (b === params.group_by) ? 1 : -1;
-        } else if (a === params.y_axis) {
-          return (b === params.group_by || b === params.x_axis) ? 1 : -1;
-        } else {
-          return a.localeCompare(b);
-        }
-      });
-      ordersLength = orders.length;
+          filtersKeys = Object.keys(params.filters).sort(),
+          filtersKeysLength = filtersKeys.length;
 
       data.sort(function (a, b) {
-        for (var i = 0; i < ordersLength; i++) {
-          var order = params.filters[orders[i]],
-            result = order.indexOf(a[orders[i]]) - order.indexOf(b[orders[i]]);
+        // Sort by params' filters
+        for (var i = 0; i < filtersKeysLength; i++) {
+          var filtersValues = params.filters[filtersKeys[i]],
+              aFilterIndex = filtersValues.indexOf(a[filtersKeys[i]]),
+              bFilterIndex = filtersValues.indexOf(b[filtersKeys[i]]),
+              result = aFilterIndex - bFilterIndex;
 
           if (result !== 0) {
             return result;
           }
         }
-        return 0;
+
+        // Sort by groupBy
+        if (params.group_by) {
+          var aGroupBy = a[params.group_by],
+              bGroupBy = b[params.group_by],
+              result = aGroupBy.localeCompare(bGroupBy);
+
+          if (result !== 0) {
+            return result;
+          }
+        }
+
+        // Sort by xAxis or yAxis (depending if it's horizontal or vertical)
+        var axis = (params.horizontal) ? params.x_axis : params.y_axis;
+        var aValue = parseFloat(a[axis]),
+            bValue = parseFloat(b[axis]);
+        if (isNaN(aValue) || isNaN(bValue)) {
+          return aValue.localeCompare(bValue);
+        } else {
+          return aValue - bValue;
+        }
       });
 
       return result;
