@@ -1,14 +1,45 @@
+// FIXME: This comes from my own fork at vitorbaptista/flot.tooltip. I've sent
+// a pull request to upstream at https://github.com/krzysu/flot.tooltip/pull/74
+// Change this to their version whenever (and if) they accept it.
 /*
  * jquery.flot.tooltip
  * 
  * description: easy-to-use tooltips for Flot charts
- * version: 0.6.7
+ * version: 0.7.0
  * author: Krzysztof Urbas @krzysu [myviews.pl]
  * website: https://github.com/krzysu/flot.tooltip
  * 
- * build on 2014-03-14
+ * build on 2014-06-04
  * released under MIT License, 2012
 */ 
+// IE8 polyfill for Array.indexOf
+if (!Array.prototype.indexOf) {
+    Array.prototype.indexOf = function (searchElement, fromIndex) {
+        if ( this === undefined || this === null ) {
+            throw new TypeError( '"this" is null or not defined' );
+        }
+        var length = this.length >>> 0; // Hack to convert object.length to a UInt32
+        fromIndex = +fromIndex || 0;
+        if (Math.abs(fromIndex) === Infinity) {
+            fromIndex = 0;
+        }
+        if (fromIndex < 0) {
+            fromIndex += length;
+            if (fromIndex < 0) {
+                fromIndex = 0;
+            }
+        }
+
+        for (;fromIndex < length; fromIndex++) {
+            if (this[fromIndex] === searchElement) {
+                return fromIndex;
+            }
+        }
+
+        return -1;
+    };
+}
+
 (function ($) {
 
     // plugin options, default values
@@ -239,11 +270,11 @@
 
         // time mode axes with custom dateFormat
         if(this.isTimeMode('xaxis', item) && this.isXDateFormat(item)) {
-            content = content.replace(xPattern, this.timestampToDate(x, this.tooltipOptions.xDateFormat));
+            content = content.replace(xPattern, this.timestampToDate(x, this.tooltipOptions.xDateFormat, item.series.xaxis.options));
         }
 
         if(this.isTimeMode('yaxis', item) && this.isYDateFormat(item)) {
-            content = content.replace(yPattern, this.timestampToDate(y, this.tooltipOptions.yDateFormat));
+            content = content.replace(yPattern, this.timestampToDate(y, this.tooltipOptions.yDateFormat, item.series.yaxis.options));
         }
 
         // set precision if defined
@@ -269,8 +300,12 @@
             // see https://github.com/krzysu/flot.tooltip/issues/65
             var tickIndex = item.dataIndex + item.seriesIndex;
 
-            if(item.series.xaxis[ticks].length > tickIndex && !this.isTimeMode('xaxis', item))
-                content = content.replace(xPattern, item.series.xaxis[ticks][tickIndex].label);
+            if(item.series.xaxis[ticks].length > tickIndex && !this.isTimeMode('xaxis', item)) {
+                var value = (this.isCategoriesMode('xaxis', item)) ? item.series.xaxis[ticks][tickIndex].label : item.series.xaxis[ticks][tickIndex].v;
+                if (value === x) {
+                    content = content.replace(xPattern, item.series.xaxis[ticks][tickIndex].label);
+                }
+            }
         }
 
         // change y from number to given label, if given
@@ -316,8 +351,8 @@
     };
 
     //
-    FlotTooltip.prototype.timestampToDate = function(tmst, dateFormat) {
-        var theDate = new Date(tmst*1);
+    FlotTooltip.prototype.timestampToDate = function(tmst, dateFormat, options) {
+        var theDate = $.plot.dateGenerator(tmst, options);
         return $.plot.formatDate(theDate, dateFormat, this.tooltipOptions.monthNames, this.tooltipOptions.dayNames);
     };
 
@@ -347,7 +382,7 @@
 
     // check whether flot-tickRotor, a plugin which allows rotation of X-axis ticks, is being used
     FlotTooltip.prototype.hasRotatedXAxisTicks = function(item) {
-        return ($.grep($.plot.plugins, function(p){ return p.name === "tickRotor"; }).length === 1 && item.series.xaxis.rotatedTicks !== 'undefined');
+        return ($.grep($.plot.plugins, function(p){ return p.name === "tickRotor"; }).length === 1 && typeof item.series.xaxis.rotatedTicks !== 'undefined');
     };
 
     //
