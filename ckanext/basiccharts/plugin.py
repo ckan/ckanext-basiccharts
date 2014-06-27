@@ -36,6 +36,7 @@ class BaseChart(p.SingletonPlugin):
             schema['group_by'] = [ignore_missing]
 
         return {'icon': 'bar-chart',
+                'filterable': True,
                 'schema': schema,
                 'iframed': False}
 

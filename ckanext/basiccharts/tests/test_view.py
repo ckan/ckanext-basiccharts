@@ -106,6 +106,10 @@ class TestBaseChart(object):
         iframed = self.plugin.info().get('iframed', True)
         assert not iframed, 'Plugin should not be iframed'
 
+    def test_plugin_is_filterable(self):
+        filterable = self.plugin.info().get('filterable', False)
+        assert filterable, 'Plugin should be filterable'
+
     @mock.patch('ckan.plugins.toolkit.get_action')
     def test_setup_template_variables_adds_resource(self, _):
         resource = {
