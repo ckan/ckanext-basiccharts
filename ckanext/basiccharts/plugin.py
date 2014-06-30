@@ -163,6 +163,7 @@ class BasicGrid(p.SingletonPlugin):
                 'title': 'Basic Grid',
                 'icon': 'table',
                 'iframed': False,
+                'filterable': True,
                 'schema': schema,
                 }
 
