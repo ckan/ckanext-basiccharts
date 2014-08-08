@@ -2,7 +2,8 @@ ckanext-basiccharts
 ===================
 
 This extension adds Line, Bar and Pie charts to CKAN, using the new Resource
-View being developed in https://github.com/ckan/ckan/tree/1251-resource-view.
+View that are still being developed on the master branch (currently
+unreleased).
 
 It uses [Flot Charts](http://www.flotcharts.org), which is compatible with all
 major browsers (including IE6+).
