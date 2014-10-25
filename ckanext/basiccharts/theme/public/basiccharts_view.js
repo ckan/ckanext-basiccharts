@@ -67,7 +67,7 @@ ckan.module("basiccharts_view", function (jQuery) {
         }
 
         // Sort by groupBy
-        if (params.group_by) {
+        if (params.group_by && params.chart_type != "pie") {
           var aGroupBy = a[params.group_by],
               bGroupBy = b[params.group_by],
               result = aGroupBy.localeCompare(bGroupBy);

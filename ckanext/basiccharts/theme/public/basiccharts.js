@@ -34,6 +34,9 @@ this.ckan.views.basiccharts = this.ckan.views.basiccharts || {};
 
       if (sortData) {
         hits = sortData(hits);
+        if (params.chart_type == "pie") {
+          hits.reverse();
+        }
       }
 
       data = prepareDataForPlot(fields, hits, config.xaxis, config.yaxis, params);
@@ -131,11 +134,22 @@ this.ckan.views.basiccharts = this.ckan.views.basiccharts || {};
       config = $.extend(config, {
         series: {
           pie: {
-            show: true
+            show: true,
+            label: {
+              show: true,
+              threshold: 0.05
+            }
           }
         },
         legend: {
-          show: false
+          show: params.show_legends
+        },
+        grid: {
+          hoverable: true
+        },
+        tooltip: true,
+        tooltipOpts: {
+          content: "%p.0%, %s"
         }
       });
     } else {

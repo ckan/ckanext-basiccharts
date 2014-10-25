@@ -1,0 +1,10 @@
+{% extends 'basechart_form.html' %}
+
+{% block form %}
+{{ super() }}
+
+{{
+    form.checkbox('show_legends', label=_("Show groups' legend"),
+    value=True, checked=resource_view['show_legends'])
+}}
+{% endblock %}

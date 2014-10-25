@@ -128,6 +128,9 @@ class PieChart(BaseChart):
 
         return info
 
+    def form_template(self, context, data_dict):
+        return 'piechart_form.html'
+
 
 class BasicGrid(p.SingletonPlugin):
 
