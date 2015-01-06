@@ -135,6 +135,7 @@ class BasicGrid(p.SingletonPlugin):
                                                   extra_template_paths])
 
         p.toolkit.add_resource('basicgrid/resources', 'basicgrid')
+        p.toolkit.add_resource('theme/public', 'basiccharts')
 
     def info(self):
         schema = {
