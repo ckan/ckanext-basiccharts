@@ -46,24 +46,6 @@ class TestBaseChart(object):
         schema = self.plugin.info()['schema']
         assert schema is not None, 'Plugin should define schema'
 
-    def test_schema_has_filter_fields(self):
-        schema = self.plugin.info()['schema']
-        assert schema.get('filter_fields') is not None, 'Schema should define "filter_fields"'
-
-    def test_schema_filter_fields_ignores_empty(self):
-        schema = self.plugin.info()['schema']
-        ignore_missing = p.toolkit.get_validator('ignore_missing')
-        assert ignore_missing in schema['filter_fields'], '"filter_fields" should ignore missing'
-
-    def test_schema_has_filter_values(self):
-        schema = self.plugin.info()['schema']
-        assert schema.get('filter_values') is not None, 'Schema should define "filter_values"'
-
-    def test_schema_filter_values_doesnt_validate(self):
-        schema = self.plugin.info()['schema']
-        ignore_missing = p.toolkit.get_validator('ignore_missing')
-        assert ignore_missing in schema['filter_values'], '"filter_values" should ignore missing'
-
     def test_schema_has_y_axis(self):
         schema = self.plugin.info()['schema']
         assert schema.get('y_axis') is not None, 'Schema should define "y_axis"'
@@ -134,58 +116,6 @@ class TestBaseChart(object):
 
         assert 'resource_view' in template_variables
         assert template_variables['resource_view'] == resource_view
-
-    @mock.patch('ckan.plugins.toolkit.get_action')
-    def test_setup_template_variables_converts_filter_fields_to_list(self, _):
-        resource_view = {
-          'id': 'resource_id',
-          'filter_fields': 'the field'
-        }
-
-        template_variables = \
-          self._setup_template_variables(resource_view=resource_view)
-
-        filter_fields = template_variables['resource_view']['filter_fields']
-        assert filter_fields == ['the field'], filter_fields
-
-    @mock.patch('ckan.plugins.toolkit.get_action')
-    def test_setup_template_variables_maintains_filter_fields_as_list(self, _):
-        resource_view = {
-          'id': 'resource_id',
-          'filter_fields': ['the field1', 'the field2']
-        }
-
-        template_variables = \
-          self._setup_template_variables(resource_view=resource_view)
-
-        filter_fields = template_variables['resource_view']['filter_fields']
-        assert filter_fields == ['the field1', 'the field2'], filter_fields
-
-    @mock.patch('ckan.plugins.toolkit.get_action')
-    def test_setup_template_variables_converts_filter_values_to_list(self, _):
-        resource_view = {
-          'id': 'resource_id',
-          'filter_values': 'the value'
-        }
-
-        template_variables = \
-          self._setup_template_variables(resource_view=resource_view)
-
-        filter_values = template_variables['resource_view']['filter_values']
-        assert filter_values == ['the value'], filter_values
-
-    @mock.patch('ckan.plugins.toolkit.get_action')
-    def test_setup_template_variables_maintains_filter_values_as_list(self, _):
-        resource_view = {
-          'id': 'resource_id',
-          'filter_values': ['the value1', 'the value2']
-        }
-
-        template_variables = \
-          self._setup_template_variables(resource_view=resource_view)
-
-        filter_values = template_variables['resource_view']['filter_values']
-        assert filter_values == ['the value1', 'the value2'], filter_values
 
     @mock.patch('ckan.plugins.toolkit.get_action')
     def test_setup_template_variables_adds_show_legends_as_true_if_it_was_defined(self, _):

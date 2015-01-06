@@ -5,46 +5,27 @@ ckan.module("basiccharts_view", function (jQuery) {
     var routeParams = window.location.search.queryStringToJSON(),
         params = {
           chart_type: chartType,
-          filters: setupFilters(defaultParams)
+          filters: setupFilters(defaultParams.filters)
         };
 
     return $.extend({}, defaultParams, routeParams, params);
   }
 
-  function setupFilters(defaultParams) {
-    var defaultFilters = parseFilters(defaultParams),
-        routeFilters = ckan.views.viewhelpers.filters.get();
+  function setupFilters(defaultFilters) {
+    var routeFilters = ckan.views.filters.get();
 
     return $.extend({}, defaultFilters, routeFilters);
   }
 
-  function parseFilters(params) {
-    var filters = {};
-
-    if (!params.filter_values) {
-      return filters;
-    }
-
-    $.each(params.filter_values, function (i, value) {
-      var field = params.filter_fields[i];
-      if (value === "") {
-        return;
-      }
-      filters[field] = filters[field] || [];
-      filters[field].push(value);
-    });
-
-    return filters;
-  }
-
   function initialize() {
-    var endpoint = this.options.endpoint || this.sandbox.client.endpoint + "/api",
-        chartType = this.options.chartType,
-        resourceView = this.options.resourceView,
+    var self = this,
+        endpoint = self.options.endpoint || self.sandbox.client.endpoint + "/api",
+        chartType = self.options.chartType,
+        resourceView = self.options.resourceView,
         params = setupParams(resourceView, chartType),
-        elementId = "#"+this.el.context.id,
+        elementId = "#"+self.el.context.id,
         resource = {
-          id: this.options.resourceId,
+          id: self.options.resourceId,
           endpoint: endpoint
         };
 

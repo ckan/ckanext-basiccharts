@@ -24,8 +24,6 @@ class BaseChart(p.SingletonPlugin):
 
     def info(self):
         schema = {
-            'filter_fields': [ignore_missing],
-            'filter_values': [ignore_missing],
             'y_axis': [not_empty],
             'show_legends': [ignore_missing]
         }
@@ -46,7 +44,6 @@ class BaseChart(p.SingletonPlugin):
     def setup_template_variables(self, context, data_dict):
         resource = data_dict['resource']
         resource_view = data_dict['resource_view']
-        resource_view = self._filter_fields_and_values_as_list(resource_view)
         resource_view['show_legends'] = bool(resource_view.get('show_legends'))
 
         fields = _get_fields_without_id(resource)
@@ -62,17 +59,6 @@ class BaseChart(p.SingletonPlugin):
 
     def form_template(self, context, data_dict):
         return 'basechart_form.html'
-
-    def _filter_fields_and_values_as_list(self, resource_view):
-        filter_fields = resource_view.get('filter_fields', [])
-        filter_values = resource_view.get('filter_values', [])
-
-        if isinstance(filter_fields, basestring):
-            resource_view['filter_fields'] = [filter_fields]
-        if isinstance(filter_values, basestring):
-            resource_view['filter_values'] = [filter_values]
-
-        return resource_view
 
 
 class LineChart(BaseChart):
@@ -152,8 +138,6 @@ class BasicGrid(p.SingletonPlugin):
 
     def info(self):
         schema = {
-            'filter_fields': [ignore_missing],
-            'filter_values': [ignore_missing],
             'fields': [ignore_missing, ignore_empty, convert_to_string,
                        validate_fields, unicode],
             'orientation': [ignore_missing],
@@ -181,7 +165,7 @@ class BasicGrid(p.SingletonPlugin):
         fields = _get_fields_without_id(resource)
         resource_view = data_dict['resource_view']
 
-        self._filter_fields_and_values_as_list(resource_view)
+        self._fields_as_string(resource_view)
         field_selection = json.dumps(
             [{'id': f['value'], 'text': f['value']} for f in fields]
         )
@@ -192,15 +176,9 @@ class BasicGrid(p.SingletonPlugin):
                 'field_selection': field_selection,
                 'orientations': orientations}
 
-    def _filter_fields_and_values_as_list(self, resource_view):
-        filter_fields = resource_view.get('filter_fields', [])
-        filter_values = resource_view.get('filter_values', [])
+    def _fields_as_string(self, resource_view):
         fields = resource_view.get('fields')
 
-        if isinstance(filter_fields, basestring):
-            resource_view['filter_fields'] = [filter_fields]
-        if isinstance(filter_values, basestring):
-            resource_view['filter_values'] = [filter_values]
         if fields:
             resource_view['fields'] = convert_to_string(fields)
 
@@ -210,17 +188,11 @@ def _view_data(resource_view):
         'resource_id': resource_view['resource_id'],
         'limit': int(resource_view.get('limit', 100))
     }
-    filters = collections.defaultdict(list)
 
-    for key, value in zip(resource_view.get('filter_fields', []),
-                          resource_view.get('filter_values', [])):
-        filters[key].append(value)
-
+    filters = resource_view.get('filters', {})
     for key, value in parse_filter_params().items():
-        filters[key][:] = value
-
-    if filters:
-        data['filters'] = dict(filters)
+        filters[key] = value
+    data['filters'] = filters
 
     fields = resource_view.get('fields')
     if fields:
