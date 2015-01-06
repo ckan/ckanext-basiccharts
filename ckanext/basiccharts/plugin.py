@@ -220,8 +220,12 @@ def convert_to_string(value):
     return value
 
 
-def validate_fields(value, context):
-    resource = {'id': context['resource'].id}
+def validate_fields(key, converted_data, errors, context):
+    try:
+        resource = {'id': converted_data['resource_id',]}
+    except KeyError:
+        resource = {'id': context['resource'].id}
+    value = converted_data.get(key)
     allowed_fields = set(field['id'] for field in _get_fields(resource))
     for field in value.split(','):
         if field not in allowed_fields:
