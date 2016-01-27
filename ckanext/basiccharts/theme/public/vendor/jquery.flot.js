@@ -2208,14 +2208,20 @@ Licensed under the MIT license.
 
         function drawSeriesLines(series) {
             function plotLine(datapoints, xoffset, yoffset, axisx, axisy) {
-                var points = datapoints.points,
+                var points = [],
                     ps = datapoints.pointsize,
                     prevx = null, prevy = null;
 
+                for (var i = 0; i < datapoints.points.length; i+=ps) {
+                    points.push(datapoints.points.slice(i, i+ps));
+                }
+
+                points.sort();
+
                 ctx.beginPath();
-                for (var i = ps; i < points.length; i += ps) {
-                    var x1 = points[i - ps], y1 = points[i - ps + 1],
-                        x2 = points[i], y2 = points[i + 1];
+                for (var i = 1; i < points.length; ++i) {
+                    var x1 = points[i - 1][0], y1 = points[i - 1][1],
+                        x2 = points[i][0], y2 = points[i][1];
 
                     if (x1 == null || x2 == null)
                         continue;
@@ -2494,9 +2500,9 @@ Licensed under the MIT license.
                 radius = series.points.radius,
                 symbol = series.points.symbol;
 
-            // If the user sets the line width to 0, we change it to a very 
+            // If the user sets the line width to 0, we change it to a very
             // small value. A line width of 0 seems to force the default of 1.
-            // Doing the conditional here allows the shadow setting to still be 
+            // Doing the conditional here allows the shadow setting to still be
             // optional even with a lineWidth of 0.
 
             if( lw == 0 )
