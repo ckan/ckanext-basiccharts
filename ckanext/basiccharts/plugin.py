@@ -1,6 +1,7 @@
 import os
 import json
 import collections
+import six
 
 import ckan.plugins as p
 
@@ -143,7 +144,7 @@ class BasicGrid(p.SingletonPlugin):
     def info(self):
         schema = {
             'fields': [ignore_missing, ignore_empty, convert_to_string,
-                       validate_fields, unicode],
+                       validate_fields, six.text_type],
             'orientation': [ignore_missing],
         }
 
@@ -194,7 +195,7 @@ def _view_data(resource_view):
     }
 
     filters = resource_view.get('filters', {})
-    for key, value in parse_filter_params().items():
+    for key, value in list(parse_filter_params().items()):
         filters[key] = value
     data['filters'] = filters
 

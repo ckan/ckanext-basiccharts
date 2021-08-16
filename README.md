@@ -11,8 +11,12 @@ major browsers (including IE6+).
 Installation
 ------------
 
-Clone this repository and run ```python setup.py install```. Then add which
-charts you'd like to your ```ckan.plugins``` in your CKAN config file.
+Clone this repository and run
+```
+python setup.py install
+pip install -r requirements.txt
+```
+Then add which charts you'd like to your ```ckan.plugins``` in your CKAN config file.
 
 You can then enable any (or all) of:
 
