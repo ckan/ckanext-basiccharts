@@ -4,6 +4,9 @@ import collections
 
 import ckan.plugins as p
 
+import ckantoolkit as tk
+_ = tk._
+
 not_empty = p.toolkit.get_validator('not_empty')
 ignore_missing = p.toolkit.get_validator('ignore_missing')
 ignore_empty = p.toolkit.get_validator('ignore_empty')
@@ -70,7 +73,7 @@ class LineChart(BaseChart):
         info = super(LineChart, self).info()
         info['schema']['x_axis'] = [not_empty]
         info['name'] = 'linechart'
-        info['title'] = 'Line Chart'
+        info['title'] = _('Line Chart')
 
         return info
 
@@ -86,7 +89,7 @@ class BarChart(LineChart):
         info = super(BarChart, self).info()
         info['schema']['horizontal'] = [ignore_missing]
         info['name'] = 'barchart'
-        info['title'] = 'Bar Chart'
+        info['title'] = _('Bar Chart')
 
         return info
 
@@ -111,7 +114,7 @@ class PieChart(BaseChart):
     def info(self):
         info = super(PieChart, self).info()
         info['name'] = 'piechart'
-        info['title'] = 'Pie Chart'
+        info['title'] = _('Pie Chart')
 
         return info
 
@@ -149,7 +152,7 @@ class BasicGrid(p.SingletonPlugin):
         }
 
         return {'name': 'basicgrid',
-                'title': 'Basic Grid',
+                'title': _('Basic Grid'),
                 'icon': 'table',
                 'iframed': False,
                 'filterable': True,
