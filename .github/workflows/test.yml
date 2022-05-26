@@ -1,0 +1,71 @@
+name: Tests
+on: [pull_request]
+env:
+  CODE_COVERAGE_THRESHOLD_REQUIRED: 50
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-python@v2
+        with:
+          python-version: '3.8'
+      - name: Install requirements
+        run: |
+          pip install flake8 pycodestyle pylint bandit
+          pip install -e .
+      - name: Check syntax
+        run: flake8 . --count --select=E901,E999,F821,F822,F823 --show-source --statistics --exclude ckan
+      - name: Run flake8
+        run: flake8 . --count --max-line-length=127 --statistics --exclude ckan
+      - name: Run pylint
+        run: pylint --output-format=colorized ckanext/basiccharts
+      - name: Run bandit
+        run: bandit -s B101,B610 -r ./ -f screen
+
+  test:
+    strategy:
+      matrix:
+        ckan-version: [2.9, 2.8, 2.7]
+      fail-fast: false
+
+    name: CKAN ${{ matrix.ckan-version }}
+    runs-on: ubuntu-latest
+    container:
+      image: openknowledge/ckan-dev:${{ matrix.ckan-version }}
+    services:
+      solr:
+        image: ckan/ckan-solr-dev:${{ matrix.ckan-version }}
+      postgres:
+        image: ckan/ckan-postgres-dev:${{ matrix.ckan-version }}
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: postgres
+        options: --health-cmd pg_isready --health-interval 10s --health-timeout 5s --health-retries 5
+      redis:
+          image: redis:3
+    env:
+      CKAN_SQLALCHEMY_URL: postgresql://ckan_default:pass@postgres/ckan_test
+      CKAN_SOLR_URL: http://solr:8983/solr/ckan
+      CKAN_REDIS_URL: redis://redis:6379/1
+
+    steps:
+    - uses: actions/checkout@v2
+    - name: Install requirements
+      run: |
+        pip install -e .
+
+    - name: Setup extension (CKAN >= 2.9)
+      if: ${{ matrix.ckan-version == '2.9' }}
+      run: |
+        ckan -c test.ini db init
+
+    - name: Setup extension (CKAN 2.7)
+      if: ${{ matrix.ckan-version != '2.9'  }}
+      run: |
+        paster --plugin=ckan db init -c test.ini
+
+    - name: Run tests
+      run: |
+        pytest --ckan-ini=test.ini --cov=ckanext.basiccharts --cov-fail-under=${CODE_COVERAGE_THRESHOLD_REQUIRED} --disable-warnings ckanext/basiccharts/tests
