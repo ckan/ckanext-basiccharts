@@ -3,6 +3,10 @@ import json
 import collections
 
 import ckan.plugins as p
+import six
+
+from packaging.version import Version
+
 
 not_empty = p.toolkit.get_validator('not_empty')
 ignore_missing = p.toolkit.get_validator('ignore_missing')
@@ -17,10 +21,13 @@ class BaseChart(p.SingletonPlugin):
 
     p.implements(p.IConfigurer, inherit=True)
     p.implements(p.IResourceView, inherit=True)
+    p.implements(p.ITemplateHelpers, inherit=True)
 
     def update_config(self, config):
         p.toolkit.add_template_directory(config, 'theme/templates')
+
         p.toolkit.add_resource('theme/public', 'basiccharts')
+        # p.toolkit.add_public_directory(config, 'theme/public')
 
     def info(self):
         schema = {
@@ -59,6 +66,16 @@ class BaseChart(p.SingletonPlugin):
 
     def form_template(self, context, data_dict):
         return 'basechart_form.html'
+
+    # ITemplateHelpers
+    def get_helpers(self):
+        return {
+            'basicchart_ckan_version': self.version_builder,
+        }
+
+    @staticmethod
+    def version_builder(text_version):
+        return Version(text_version)
 
 
 class LineChart(BaseChart):
@@ -122,10 +139,12 @@ class BasicGrid(p.SingletonPlugin):
 
     p.implements(p.IConfigurer, inherit=True)
     p.implements(p.IResourceView, inherit=True)
-    p.implements(p.ITemplateHelpers)
+    p.implements(p.ITemplateHelpers, inherit=True)
 
     def get_helpers(self):
-        return {'view_data': _view_data}
+        return {'view_data': _view_data,
+                'basicgrid_ckan_version': Version,
+                }
 
     def update_config(self, config):
         here = os.path.dirname(__file__)
@@ -138,12 +157,13 @@ class BasicGrid(p.SingletonPlugin):
                                                   extra_template_paths])
 
         p.toolkit.add_resource('basicgrid/resources', 'basicgrid')
-        p.toolkit.add_resource('theme/public', 'basiccharts')
+        # p.toolkit.add_resource('theme/public', 'basiccharts')
+        # p.toolkit.add_public_directory(config, 'theme/public')
 
     def info(self):
         schema = {
             'fields': [ignore_missing, ignore_empty, convert_to_string,
-                       validate_fields, unicode],
+                       validate_fields, six.ensure_str],
             'orientation': [ignore_missing],
         }
 
@@ -208,7 +228,11 @@ def _view_data(resource_view):
 
 def parse_filter_params():
     filters = collections.defaultdict(list)
-    filter_string = dict(p.toolkit.request.GET).get('filters', '')
+    try:
+        filter_string = p.toolkit.request.values.get('filters', '')
+    except AttributeError:
+        filter_string = dict(p.toolkit.request.GET).get('filters', '')
+
     for filter in filter_string.split('|'):
         if filter.count(':') != 1:
             continue

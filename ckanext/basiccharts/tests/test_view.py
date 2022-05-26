@@ -1,12 +1,11 @@
 import os
 import inspect
 import mock
-import nose.tools
-import pylons.config as config
-
+import pytest
 import ckan.plugins as p
 
 import ckanext.basiccharts
+from ckan.common import config
 
 
 class TestBaseChart(object):
@@ -15,9 +14,9 @@ class TestBaseChart(object):
     def setup_class(cls):
         cls.plugin = ckanext.basiccharts.plugin.BaseChart()
 
-    @nose.tools.raises(p.PluginNotFoundException)
     def test_plugin_cant_be_loaded(self):
-        p.load('basechart')
+        with pytest.raises(p.PluginNotFoundException):
+            p.load('basechart')
 
     def test_chart_type(self):
         assert self.plugin.CHART_TYPE == 'base', '"CHART_TYPE" should be "base"'

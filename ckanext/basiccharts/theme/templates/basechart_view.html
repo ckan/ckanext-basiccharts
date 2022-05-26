@@ -1,4 +1,6 @@
-{% resource 'basiccharts/main' %}
+{% set ckan_29_or_higher = h.basicchart_ckan_version(h.ckan_version()) >= h.basicchart_ckan_version('2.9') %}
+{% set type = 'asset' if ckan_29_or_higher else 'resource' %}
+{% snippet 'snippets/basicchart_' ~ type ~ '.html' %}
 
 <div
   data-module = "basiccharts_view"

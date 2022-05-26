@@ -1,0 +1,5 @@
+main-js:
+  output: basicgrid/%(version)b_main.js
+  filters: rjsmin
+  contents:
+    - scripts/basicgrid.js
