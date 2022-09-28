@@ -7,6 +7,7 @@ import ckan.plugins as p
 not_empty = p.toolkit.get_validator('not_empty')
 ignore_missing = p.toolkit.get_validator('ignore_missing')
 ignore_empty = p.toolkit.get_validator('ignore_empty')
+unicode_safe = p.toolkit.get_validator('unicode_safe')
 
 
 class BaseChart(p.SingletonPlugin):
@@ -143,7 +144,7 @@ class BasicGrid(p.SingletonPlugin):
     def info(self):
         schema = {
             'fields': [ignore_missing, ignore_empty, convert_to_string,
-                       validate_fields, unicode],
+                       validate_fields, unicode_safe],
             'orientation': [ignore_missing],
         }
 
@@ -208,7 +209,7 @@ def _view_data(resource_view):
 
 def parse_filter_params():
     filters = collections.defaultdict(list)
-    filter_string = dict(p.toolkit.request.GET).get('filters', '')
+    filter_string = dict(p.toolkit.request.args.get('filters', '')) or ''
     for filter in filter_string.split('|'):
         if filter.count(':') != 1:
             continue

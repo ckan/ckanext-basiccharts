@@ -1,4 +1,7 @@
-{% resource 'basiccharts/main' %}
+{# asset if ckan_version >= 2.9, otherwise resource #}
+{% set type = 'asset' if h.ckan_version().split('.')|map('int')|list >= [2, 9, 0] else 'resource' %}
+
+{% include 'snippets/basiccharts_' ~ type ~ '.html' %}
 
 <div
   data-module = "basiccharts_view"

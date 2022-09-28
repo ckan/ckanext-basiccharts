@@ -1,5 +1,8 @@
 {% import 'macros/form.html' as form %}
-{% resource 'basicgrid/main' %}
+
+{% set type = 'asset' if h.ckan_version().split('.')|map('int')|list >= [2, 9, 0] else 'resource' %}
+
+{% include 'snippets/basicgrid_' ~ type ~ '.html' %}
 
 {{ form.input('fields', id='field-fields', label=_('Fields'), value=data.fields, error=errors.fields, classes=['control-full'], attrs={'hidden': true, 'data-module': 'basicgrid-multiselect', 'data-module-fields': field_selection }) }}
 
