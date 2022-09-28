@@ -16,8 +16,3 @@ basiccharts_js:
     - basiccharts.js
     - basiccharts_view.js
     - basiccharts.css
-
-# basiccharts_css:
-#   filter: cssrewrite
-#   contents:
-#     - basiccharts.css
