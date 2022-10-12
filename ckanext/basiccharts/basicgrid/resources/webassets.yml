@@ -1,0 +1,7 @@
+basicgrid_js:
+  extra:
+    preload:
+      - base/main
+      - vendor/reorder
+  contents:
+    - scripts/basicgrid.js

@@ -1,0 +1,18 @@
+basiccharts_js:
+  extra:
+    preload:
+      - base/main
+
+  contents:
+    - scripts/basicgrid.js
+    - vendor/jquery.flot.js
+    - vendor/jquery.flot.pie.js
+    - vendor/jquery.flot.time.js
+    - vendor/jquery.flot.categories.js
+    - vendor/jquery.flot.tooltip.js
+    - vendor/jquery.flot.resize.js
+    - vendor/queryStringToJSON.js
+    - vendor/backend.ckan.js
+    - basiccharts.js
+    - basiccharts_view.js
+    - basiccharts.css
