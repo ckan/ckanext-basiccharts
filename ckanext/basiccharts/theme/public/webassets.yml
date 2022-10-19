@@ -15,4 +15,7 @@ basiccharts_js:
     - vendor/backend.ckan.js
     - basiccharts.js
     - basiccharts_view.js
-    - basiccharts.css
+
+basiccharts_css:
+  contents:
+   - basiccharts.css
