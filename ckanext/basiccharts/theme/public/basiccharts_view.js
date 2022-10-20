@@ -12,7 +12,7 @@ ckan.module("basiccharts_view", function (jQuery) {
   }
 
   function setupFilters(defaultFilters) {
-    var routeFilters = ckan.views.filters.get();
+    var routeFilters = ckan.views.filters ? ckan.views.filters.get() : {};
 
     return $.extend({}, defaultFilters, routeFilters);
   }
