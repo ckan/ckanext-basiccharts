@@ -23,7 +23,7 @@ ckan.module("basiccharts_view", function (jQuery) {
         chartType = self.options.chartType,
         resourceView = self.options.resourceView,
         params = setupParams(resourceView, chartType),
-        elementId = "#"+self.el.context.id,
+        elementId = self.el.context ? "#"+self.el.context.id : "#"+self.el[0].id,
         resource = {
           id: self.options.resourceId,
           endpoint: endpoint
