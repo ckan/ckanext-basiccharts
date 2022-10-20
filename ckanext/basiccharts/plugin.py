@@ -209,7 +209,7 @@ def _view_data(resource_view):
 
 def parse_filter_params():
     filters = collections.defaultdict(list)
-    filter_string = dict(p.toolkit.request.args.get('filters', '')) or ''
+    filter_string = p.toolkit.request.args.get('filters', '')
     for filter in filter_string.split('|'):
         if filter.count(':') != 1:
             continue
