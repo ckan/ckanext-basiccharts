@@ -80,6 +80,7 @@ this.ckan.views.basiccharts = this.ckan.views.basiccharts || {};
   }
 
   function prepareDataForPlot(fields, records, xAxis, yAxis, params) {
+    
     var grouppedData = convertAndGroup(fields, records, params),
         xAxisMode = xAxis && xAxis.mode,
         yAxisMode = yAxis.mode,
@@ -90,8 +91,9 @@ this.ckan.views.basiccharts = this.ckan.views.basiccharts || {};
           bars: {
             show: true,
             horizontal: params.horizontal,
-            align: "center",
-            barWidth: barWidth
+            //align: "center",
+            barWidth: (barWidth/Object.keys(grouppedData).length),
+            order: 1
           }
         };
 
